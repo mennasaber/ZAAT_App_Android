@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TalkFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            android:padding="16dp">
+
+            <LinearLayout
+
+                android:id="@+id/linearlayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Hello My Friend"
+                    android:textColor="@color/colorDarkRed"
+                    android:textSize="20sp"
+
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="7dp"
+                    android:src="@drawable/heart" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_zaat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linearlayout"
+                android:layout_marginBottom="16dp"
+                android:text="@string/zaat_message"
+                android:textColor="@color/colorDarkRed"
+                android:textSize="15dp" />
+
+            <EditText
+                android:id="@+id/EditText_message"
+                android:layout_width="match_parent"
+                android:padding="5dp"
+                android:layout_height="200dp"
+                android:layout_below="@id/text_zaat"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_edittext" />
+
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_below="@id/EditText_message"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_button"
+                android:text="Save"
+                android:textColor="@color/colorWhite"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+    </ScrollView>
+</FrameLayout>
