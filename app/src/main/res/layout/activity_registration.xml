@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/password_registration"
             android:checkedButton="@id/male_radio_button"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <RadioButton
                 android:id="@+id/male_radio_button"

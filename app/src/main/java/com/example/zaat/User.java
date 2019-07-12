@@ -1,9 +1,9 @@
 package com.example.zaat;
 
 public class User {
-    String uName;
-    String uPassword;
-    String uGender;
+    private String uName;
+    private String uPassword;
+    private String uGender;
     String uID;
 
     public User() {
@@ -30,6 +30,14 @@ public class User {
         this.uPassword = uPassword;
         this.uGender = uGender;
     }
+
+    public User(String uName, String uPassword, String uID, String uGender) {
+        this.uName = uName;
+        this.uPassword = uPassword;
+        this.uGender = uGender;
+        this.uID = uID;
+    }
+
 
     public String getuName() {
         return uName;

@@ -1,6 +1,8 @@
 package com.example.zaat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 
 public class Login extends AppCompatActivity {
 
-    static User user = null;
+    User user = null;
     ArrayList<User> listUser = new ArrayList<>();
     DatabaseReference databaseReference;
     TextView Username_text_view;
@@ -30,10 +32,10 @@ public class Login extends AppCompatActivity {
     TextView CreateEmail_text_View;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
@@ -52,7 +54,10 @@ public class Login extends AppCompatActivity {
                 uPassword = password_text_view.getText().toString();
 
                 if (CheckValidUser(uName, uPassword)) {
+                    SaveData(user);
                     Intent MainIntent = new Intent(Login.this, MainActivity.class);
+                    MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    MainIntent.putExtra("EXIT", true);
                     startActivity(MainIntent);
                 } else
                     Toast.makeText(Login.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
@@ -69,6 +74,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     protected void onStart() {
@@ -91,7 +97,16 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Error", Toast.LENGTH_SHORT).show();
             }
         }));
+        SharedPreferences myPrefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String username = myPrefs.getString("uname", null);
+        if (username != null) {
+            Intent MainIntent = new Intent(Login.this, MainActivity.class);
+            MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            MainIntent.putExtra("EXIT", true);
+            startActivity(MainIntent);
+        }
     }
+
 
     private boolean CheckValidUser(String uName, String uPassword) {
 
@@ -104,6 +119,16 @@ public class Login extends AppCompatActivity {
 
         }
         return false;
+    }
+
+    private void SaveData(User user) {
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("uname", user.getuName());
+        editor.putString("upassword", user.getuPassword());
+        editor.putString("uid", user.uID);
+        editor.putString("ugender", user.getuGender());
+        editor.apply();
     }
 
 }
