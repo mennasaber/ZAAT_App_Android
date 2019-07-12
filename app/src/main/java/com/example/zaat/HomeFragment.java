@@ -1,11 +1,14 @@
 package com.example.zaat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -38,7 +41,27 @@ public class HomeFragment extends Fragment {
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
 
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final String mId = listMessages.get(i).getmID();
 
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Delete")
+                            .setMessage("Are you sure you want to delete this?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DatabaseReference d = FirebaseDatabase.getInstance().getReference()
+                                            .child("Messages").child(mId);
+                                    d.removeValue();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(R.drawable.danger)
+                            .show();
+                
+            }
+        });
         return view;
     }
 
