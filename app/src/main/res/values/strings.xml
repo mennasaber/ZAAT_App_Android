@@ -6,4 +6,9 @@ So don't let anything inside you without tell me it :)"</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="listofstatues">
+        <item>"None"</item>
+        <item>"Speak"</item>
+        <item>"Listen"</item>
+    </string-array>
 </resources>

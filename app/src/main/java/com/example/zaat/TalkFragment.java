@@ -26,7 +26,7 @@ public class TalkFragment extends Fragment {
     Message message;
     User user;
     EditText message_edit_view;
-    SharedPreferences myPrefs;
+    SharedPreferences sharedPreferences;
 
     public TalkFragment() {
         // Required empty public constructor
@@ -39,11 +39,13 @@ public class TalkFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_talk, container, false);
 
-        myPrefs = getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-        user = new User(myPrefs.getString("uname", null),
-                myPrefs.getString("upassword", null),
-                myPrefs.getString("uid", null),
-                myPrefs.getString("ugender", null));
+        sharedPreferences = getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        user = new User(sharedPreferences.getString("uname", null),
+                sharedPreferences.getString("upassword", null),
+                sharedPreferences.getString("uid", null),
+                sharedPreferences.getString("ugender", null),
+                sharedPreferences.getString("ustatue", null),
+                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
 
         Save_button = view.findViewById(R.id.save_button);
 

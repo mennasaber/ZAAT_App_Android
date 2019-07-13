@@ -49,9 +49,9 @@ public class registration extends AppCompatActivity {
                 if (ValidationUser(username, password)) {
 
                     databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-                    user = new User(username, password, getGender(radioButton_female, radioButton_male));
+                    user = new User(username, password, getGender(radioButton_female, radioButton_male), "None", false);
                     user.setuID(databaseReference.push().getKey());
-                    
+
 //                     databaseReference.child(user.uID).runTransaction(new Transaction.Handler(){
 //
 //                        @NonNull
@@ -102,6 +102,8 @@ public class registration extends AppCompatActivity {
         editor.putString("upassword", user.getuPassword());
         editor.putString("uid", user.uID);
         editor.putString("ugender", user.getuGender());
-        editor.commit();
+        editor.putString("ustatue", user.getUstatue());
+        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.apply();
     }
 }

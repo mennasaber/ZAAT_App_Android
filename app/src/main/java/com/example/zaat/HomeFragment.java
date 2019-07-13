@@ -27,7 +27,7 @@ public class HomeFragment extends Fragment {
     View view;
     User user;
     ArrayList<Message> listMessages = new ArrayList<>();
-    SharedPreferences myPrefs;
+    SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
     MessageAdapter messageAdapter;
     ListView list;
@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         list = view.findViewById(R.id.list);
+
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
@@ -59,7 +60,7 @@ public class HomeFragment extends Fragment {
                             .setNegativeButton(android.R.string.no, null)
                             .setIcon(R.drawable.danger)
                             .show();
-                
+
             }
         });
         return view;
@@ -75,11 +76,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (isAdded()) {
-                    myPrefs = getActivity().getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-                    user = new User(myPrefs.getString("uname", null),
-                            myPrefs.getString("upassword", null),
-                            myPrefs.getString("uid", null),
-                            myPrefs.getString("ugender", null));
+                    sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    user = new User(sharedPreferences.getString("uname", null),
+                            sharedPreferences.getString("upassword", null),
+                            sharedPreferences.getString("uid", null),
+                            sharedPreferences.getString("ugender", null),
+                            sharedPreferences.getString("ustatue", null),
+                            Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
                     listMessages.clear();
 
                     for (DataSnapshot d : dataSnapshot.getChildren()) {

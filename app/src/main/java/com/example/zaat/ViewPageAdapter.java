@@ -19,7 +19,7 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
             case 1:
                 return new TalkFragment();
             case 2:
-                return new SettingFragment();
+                return new ChattingFragment();
             default:
                 return null;
         }

@@ -128,6 +128,8 @@ public class Login extends AppCompatActivity {
         editor.putString("upassword", user.getuPassword());
         editor.putString("uid", user.uID);
         editor.putString("ugender", user.getuGender());
+        editor.putString("ustatue", user.getUstatue());
+        editor.putString("uinchat", String.valueOf(user.getuInChat()));
         editor.apply();
     }
 
