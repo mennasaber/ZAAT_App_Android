@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".StartchatActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorLightRed"
+        android:gravity="center"
+        android:text="Start Chat"
+        android:textAllCaps="true"
+        android:textColor="@color/colorDarkRed"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:text="Person Gender"
+        android:textColor="@color/colorDarkRed"
+        android:textSize="15sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checkedButton="@id/maleChat"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="20dp">
+
+        <RadioButton
+            android:id="@+id/maleChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:buttonTint="@color/colorDarkRed"
+            android:text="Male" />
+
+        <RadioButton
+            android:id="@+id/femaleChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorDarkRed"
+            android:text="Female" />
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/startChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="150dp"
+        android:background="@color/colorDarkRed"
+        android:text="Start"
+        android:textColor="@color/colorWhite" />
+
+</LinearLayout>

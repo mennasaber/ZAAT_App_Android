@@ -54,11 +54,11 @@
             <EditText
                 android:id="@+id/EditText_message"
                 android:layout_width="match_parent"
-                android:padding="5dp"
                 android:layout_height="200dp"
                 android:layout_below="@id/text_zaat"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/rounded_edittext" />
+                android:background="@drawable/rounded_edittext"
+                android:padding="5dp" />
 
 
             <Button
