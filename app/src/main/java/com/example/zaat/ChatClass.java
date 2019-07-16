@@ -1,23 +1,24 @@
 package com.example.zaat;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ChatClass {
 
     private String fID;
     private String sId;
-    private ArrayList<String> messages;
+    private ArrayList<Message_chatting> messageList;
+
 
     public ChatClass(String fID, String sId) {
         this.fID = fID;
         this.sId = sId;
-        this.messages = new ArrayList<>();
     }
 
-    public ChatClass(String fID, String sId, ArrayList<String> messages) {
+    public ChatClass(String fID, String sId, ArrayList<Message_chatting> messageList) {
         this.fID = fID;
         this.sId = sId;
-        this.messages = messages;
+        this.messageList = messageList;
     }
 
     public String getfID() {
@@ -36,11 +37,11 @@ public class ChatClass {
         this.sId = sId;
     }
 
-    public ArrayList<String> getMessages() {
-        return messages;
+    public ArrayList<Message_chatting> getMessageList() {
+        return messageList;
     }
 
-    public void setMessages(ArrayList<String> messages) {
-        this.messages = messages;
+    public void setMessageList(ArrayList<Message_chatting> messageList) {
+        this.messageList = messageList;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.zaat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -75,7 +76,11 @@ public class StartchatActivity extends AppCompatActivity {
                             int i = listUser.size();
                             final int random = new Random().nextInt(i);
                             chat = new ChatClass(user.uID, listUser.get(random).uID);
+                            user.setuInChat(true);
+                            updateSharedpref();
                             databaseRef.push().setValue(chat);
+                            Intent intent = new Intent(getApplicationContext(), Chat.class);
+                            startActivity(intent);
                         } else if (user.getUstatue().equals("None")) {
                             Toast.makeText(StartchatActivity.this, "Your Statue is 'None', Change it", Toast.LENGTH_SHORT).show();
 
@@ -106,5 +111,17 @@ public class StartchatActivity extends AppCompatActivity {
             return "male";
         else
             return "female";
+    }
+
+    private void updateSharedpref() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("uname", user.getuName());
+        editor.putString("upassword", user.getuPassword());
+        editor.putString("uid", user.uID);
+        editor.putString("ugender", user.getuGender());
+        editor.putString("ustatue", user.getUstatue());
+        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.apply();
     }
 }

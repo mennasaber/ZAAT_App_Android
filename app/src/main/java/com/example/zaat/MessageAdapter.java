@@ -28,7 +28,6 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
         TextView textView_message = listItemView.findViewById(R.id.text_view_message);
         textView_message.setText(currentMessage.getMessage());
-
         return listItemView;
     }
 }
