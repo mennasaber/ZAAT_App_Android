@@ -39,6 +39,15 @@ public class ChattingFragment extends Fragment {
 
                 }
             });
+            RelativeLayout relativeLayout_profile = view.findViewById(R.id.profile);
+            relativeLayout_profile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent profileIntent = new Intent(getActivity().getApplicationContext(), ProfileActivity.class);
+                    startActivity(profileIntent);
+
+                }
+            });
             RelativeLayout relativeLayout_chat = view.findViewById(R.id.chatting);
             relativeLayout_chat.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -46,7 +55,8 @@ public class ChattingFragment extends Fragment {
                     if (!user.getuInChat()) {
                         Intent startChatIntent = new Intent(getActivity().getApplicationContext(), StartchatActivity.class);
                         startActivity(startChatIntent);
-                    } else {
+                    }
+                    else {
                         Intent chatIntent = new Intent(getActivity().getApplicationContext(), Chat.class);
                         startActivity(chatIntent);
                     }

@@ -100,7 +100,7 @@ public class StartchatActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(StartchatActivity.this, "there's not available person", Toast.LENGTH_SHORT).show();
                         }
-                    }
+            }
 
 
                     @Override
@@ -110,7 +110,8 @@ public class StartchatActivity extends AppCompatActivity {
                 });
             }
         });
-    }
+
+        }
 
     @Override
     protected void onStart() {

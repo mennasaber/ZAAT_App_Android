@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorLightRed"
     tools:context=".StartchatActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
-        android:background="@color/colorLightRed"
+        android:background="@color/colorWhite"
         android:gravity="center"
         android:text="Start Chat"
         android:textAllCaps="true"

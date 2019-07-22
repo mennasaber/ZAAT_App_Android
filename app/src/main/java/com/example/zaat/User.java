@@ -71,4 +71,8 @@ public class User {
     public String getuGender() {
         return uGender;
     }
+
+    public String getuID() {
+        return uID;
+    }
 }

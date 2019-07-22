@@ -42,10 +42,11 @@
 
         <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/radio_group"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/password_registration"
             android:checkedButton="@id/male_radio_button"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             >
 
@@ -54,6 +55,7 @@
                 android:layout_width="146dp"
                 android:layout_height="match_parent"
                 android:buttonTint="@color/colorDarkRed"
+                android:layout_marginBottom="20dp"
                 android:text="Male"
                 android:textColor="@color/colorDarkRed" />
 
@@ -61,6 +63,7 @@
                 android:id="@+id/female_radio_button"
                 android:layout_width="146dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
                 android:text="Female"
                 android:textColor="@color/colorDarkRed" />
