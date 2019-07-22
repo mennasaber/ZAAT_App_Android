@@ -4,9 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/colorLightRed"
+    android:orientation="vertical"
     tools:context=".Chat">
+
     <ListView
         android:id="@+id/listView_chat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:divider="@null"
+        android:layout_weight="25"
+        />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/chat_text"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:paddingLeft="8dp"
+            android:paddingRight="6dp" />
+
+        <ImageButton
+            android:id="@+id/button_send"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/colorLightRed"
+            android:src="@drawable/send" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -72,13 +72,26 @@ public class StartchatActivity extends AppCompatActivity {
                             }
                         }
                         if (listUser.size() > 0) {
+
                             DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Chats");
+                            DatabaseReference mdatabaseRef = FirebaseDatabase.getInstance().getReference("Chat_Messages");
+
                             int i = listUser.size();
                             final int random = new Random().nextInt(i);
                             chat = new ChatClass(user.uID, listUser.get(random).uID);
                             user.setuInChat(true);
                             updateSharedpref();
+
+
+                            ArrayList<Message_chatting> m = new ArrayList<>();
+                            chat.setmID(mdatabaseRef.push().getKey());
+                            mdatabaseRef.child(chat.getmID()).setValue(m);
+
+
                             databaseRef.push().setValue(chat);
+                            databaseReference.child(user.uID).setValue(user);
+                            databaseReference.child(listUser.get(random).uID).child("uInChat").setValue(true);
+
                             Intent intent = new Intent(getApplicationContext(), Chat.class);
                             startActivity(intent);
                         } else if (user.getUstatue().equals("None")) {

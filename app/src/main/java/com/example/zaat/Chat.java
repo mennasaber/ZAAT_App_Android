@@ -1,9 +1,17 @@
 package com.example.zaat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,43 +30,179 @@ public class Chat extends AppCompatActivity {
     ChatClass chatting;
     SharedPreferences sharedPreferences;
     static User user;
-    ArrayList<Message_chatting> list_message ;
-    ChatAdapter chatAdapter;
-    ListView list ;
+    ArrayList<Message_chatting> list_message;
+    DatabaseReference mdaDatabaseReference;
+    ListView list;
+    ImageView image_send;
+    String chatID;
+    ChatAdapter adapter;
+    TextView text_message;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.endchat_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.no_chat_action:
+                new AlertDialog.Builder(Chat.this)
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to end this conversation?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                user.setuInChat(false);
+
+                                clearDataOfChat();
+                                updateUsersData();
+                                updateSharedpref();
+
+                                Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
+                                LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                LoginIntent.putExtra("EXIT", true);
+                                startActivity(LoginIntent);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(R.drawable.danger)
+                        .show();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateUsersData() {
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        databaseRef.child(chatting.getfID()).child("uInChat").setValue(false);
+        databaseRef.child(chatting.getsId()).child("uInChat").setValue(false);
+    }
+
+    private void clearDataOfChat() {
+        DatabaseReference d = FirebaseDatabase.getInstance().getReference()
+                .child("Chat_Messages").child(chatting.getmID());
+        d.removeValue();
+        d = FirebaseDatabase.getInstance().getReference()
+                .child("Chats").child(chatID);
+        d.removeValue();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
         list = findViewById(R.id.listView_chat);
+        list_message = new ArrayList<>();
+        adapter = new ChatAdapter(Chat.this, 0, list_message);
+        list.setAdapter(adapter);
+        image_send = findViewById(R.id.button_send);
+        text_message = findViewById(R.id.chat_text);
+        chatting = new ChatClass();
+
+        sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        user = new User(sharedPreferences.getString("uname", null),
+                sharedPreferences.getString("upassword", null),
+                sharedPreferences.getString("uid", null),
+                sharedPreferences.getString("ugender", null),
+                sharedPreferences.getString("ustatue", null),
+                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
+
         databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         databaseReference.addValueEventListener((new ValueEventListener() {
-
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                sharedPreferences = getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-                user = new User(sharedPreferences.getString("uname", null),
-                        sharedPreferences.getString("upassword", null),
-                        sharedPreferences.getString("uid", null),
-                        sharedPreferences.getString("ugender", null),
-                        sharedPreferences.getString("ustatue", null),
-                        Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
-
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
                     chatting = d.getValue(ChatClass.class);
-                    if (chatting.getfID().equals(user.uID)||chatting.getsId().equals(user.uID))
+
+                    if (chatting.getfID().equals(user.uID) || chatting.getsId().equals(user.uID)) {
+                        chatID = d.getKey();
                         break;
+                    }
                 }
-                list_message = chatting.getMessageList();
-                chatAdapter = new ChatAdapter(getApplicationContext(),0,list_message);
-                list.setAdapter(chatAdapter);
             }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        }));
+
+        image_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String m = String.valueOf(text_message.getText());
+                if (!m.equals("")) {
+                    Message_chatting mess = new Message_chatting(user.uID, m);
+                    list_message.add(mess);
+                    text_message.setText("");
+                    updateChat();
+                }
+
+            }
+        });
+    }
+
+    private void scrollListView() {
+        list.post(new Runnable() {
+            @Override
+            public void run() {
+                list.setSelection(adapter.getCount() - 1);
+            }
+        });
+    }
+
+    private void updateChat() {
+        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
+        mdaDatabaseReference.child(chatting.getmID()).setValue(list_message);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
+        mdaDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                list_message.clear();
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    if (d.getKey().equals(chatting.getmID())) {
+                        for (DataSnapshot dchild : d.getChildren()) {
+                            Message_chatting m = dchild.getValue(Message_chatting.class);
+                            list_message.add(m);
+                        }
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                scrollListView();
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        }));
+        });
+
+    }
+
+    private void updateSharedpref() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("uname", user.getuName());
+        editor.putString("upassword", user.getuPassword());
+        editor.putString("uid", user.uID);
+        editor.putString("ugender", user.getuGender());
+        editor.putString("ustatue", user.getUstatue());
+        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent main = new Intent(Chat.this, MainActivity.class);
+        main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        main.putExtra("EXIT", true);
+        startActivity(main);
     }
 }

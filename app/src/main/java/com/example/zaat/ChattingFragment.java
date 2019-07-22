@@ -44,8 +44,11 @@ public class ChattingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if (!user.getuInChat()) {
-                        Intent statueIntent = new Intent(getActivity().getApplicationContext(), StartchatActivity.class);
-                        startActivity(statueIntent);
+                        Intent startChatIntent = new Intent(getActivity().getApplicationContext(), StartchatActivity.class);
+                        startActivity(startChatIntent);
+                    } else {
+                        Intent chatIntent = new Intent(getActivity().getApplicationContext(), Chat.class);
+                        startActivity(chatIntent);
                     }
                 }
             });
