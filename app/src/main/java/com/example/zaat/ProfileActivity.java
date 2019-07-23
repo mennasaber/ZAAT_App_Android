@@ -1,7 +1,6 @@
 package com.example.zaat;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -43,13 +42,5 @@ public class ProfileActivity extends AppCompatActivity {
                 sharedPreferences.getString("ugender", null),
                 sharedPreferences.getString("ustatue", null),
                 Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent main = new Intent(ProfileActivity.this, MainActivity.class);
-        main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        main.putExtra("EXIT", true);
-        startActivity(main);
     }
 }

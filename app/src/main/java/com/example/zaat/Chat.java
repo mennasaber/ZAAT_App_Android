@@ -37,6 +37,7 @@ public class Chat extends AppCompatActivity {
     String chatID;
     ChatAdapter adapter;
     TextView text_message;
+    Boolean inChatting;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,6 +94,7 @@ public class Chat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        inChatting = false;
         list = findViewById(R.id.listView_chat);
         list_message = new ArrayList<>();
         adapter = new ChatAdapter(Chat.this, 0, list_message);
@@ -116,14 +118,16 @@ public class Chat extends AppCompatActivity {
 
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
                     chatting = d.getValue(ChatClass.class);
-
                     if (chatting.getfID().equals(user.uID) || chatting.getsId().equals(user.uID)) {
                         chatID = d.getKey();
+                        inChatting = true;
                         break;
-                    }
+                    } else
+                        inChatting = false;
                 }
+                if ((!inChatting) && user.getuInChat())
+                    closeActivity();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -142,6 +146,13 @@ public class Chat extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void closeActivity() {
+        Intent startChatIntent = new Intent(Chat.this, StartchatActivity.class);
+        startChatIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startChatIntent.putExtra("EXIT", true);
+        startActivity(startChatIntent);
     }
 
     private void scrollListView() {

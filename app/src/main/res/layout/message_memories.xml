@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/message_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:background="@color/colorDarkRedChat"
+    android:orientation="vertical"
+    android:padding="15dp">
 
     <TextView
-        android:id="@+id/text_view_date"
-        android:layout_width="match_parent"
+        android:id="@+id/text_view_date_memories"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
-        android:gravity="center"
-        android:text="02-jan-2019"
-        android:textColor="@color/colorDarkRed"
+        android:text="Date"
+        android:textColor="@color/colorWhite"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext">
+        android:background="@drawable/rounded_chatitem2"
+        android:orientation="vertical">
+
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/image_memories"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
             android:padding="12dp"
             android:src="@drawable/icon" />
 
         <TextView
-            android:id="@+id/text_view_message"
+            android:id="@+id/text_view_message_memories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/image"
+            android:gravity="center_horizontal"
             android:padding="6dp"
             android:text="Message"
             android:textColor="@color/colorDarkRed"
             android:textSize="18sp" />
-    </RelativeLayout>
 
+    </LinearLayout>
 </LinearLayout>

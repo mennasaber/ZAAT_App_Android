@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,7 +39,8 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         list = view.findViewById(R.id.list);
 
-
+        messageAdapter = new MessageAdapter(getActivity().getApplicationContext(), 0, listMessages);
+        list.setAdapter(messageAdapter);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
 
@@ -90,8 +92,17 @@ public class HomeFragment extends Fragment {
                         if (m.getuID().equals(user.uID))
                             listMessages.add(m);
                     }
-                    messageAdapter = new MessageAdapter(getActivity().getApplicationContext(), 0, listMessages);
-                    list.setAdapter(messageAdapter);
+                    if(listMessages.size()==0)
+                    {
+                        TextView t = view.findViewById(R.id.no_memories_home);
+                        t.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        TextView t = view.findViewById(R.id.no_memories_home);
+                        t.setVisibility(View.GONE);
+                    }
+                    messageAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -101,6 +112,7 @@ public class HomeFragment extends Fragment {
             }
         }));
     }
+
 
     @Override
     public void onResume() {

@@ -67,7 +67,8 @@ public class StartchatActivity extends AppCompatActivity {
                             User u = d.getValue(User.class);
                             if (!u.uID.equals(user.uID) && !u.getUstatue().equals(user.getUstatue()) &&
                                     !u.getuInChat().equals(true) && !u.getUstatue().equals("None") &&
-                                    !user.getUstatue().equals("None") && u.getuGender().equals(getGender(rMale, rFemale))) {
+                                    !user.getUstatue().equals("None") &&
+                                    u.getuGender().equals(getGender(rMale, rFemale))) {
                                 listUser.add(u);
                             }
                         }
@@ -100,7 +101,7 @@ public class StartchatActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(StartchatActivity.this, "there's not available person", Toast.LENGTH_SHORT).show();
                         }
-            }
+                    }
 
 
                     @Override
@@ -111,7 +112,7 @@ public class StartchatActivity extends AppCompatActivity {
             }
         });
 
-        }
+    }
 
     @Override
     protected void onStart() {
@@ -137,5 +138,13 @@ public class StartchatActivity extends AppCompatActivity {
         editor.putString("ustatue", user.getUstatue());
         editor.putString("uinchat", String.valueOf(user.getuInChat()));
         editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent main = new Intent(StartchatActivity.this, MainActivity.class);
+        main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        main.putExtra("EXIT", true);
+        startActivity(main);
     }
 }

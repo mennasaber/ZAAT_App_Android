@@ -2,19 +2,27 @@ package com.example.zaat;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.ByteArrayOutputStream;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class TalkFragment extends Fragment {
@@ -38,7 +46,7 @@ public class TalkFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_talk, container, false);
-
+        message = new Message();
         sharedPreferences = getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         user = new User(sharedPreferences.getString("uname", null),
                 sharedPreferences.getString("upassword", null),
@@ -48,7 +56,6 @@ public class TalkFragment extends Fragment {
                 Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
 
         Save_button = view.findViewById(R.id.save_button);
-
         message_edit_view = view.findViewById(R.id.EditText_message);
 
 
@@ -66,13 +73,11 @@ public class TalkFragment extends Fragment {
                     databaseReference.child(message.mID).setValue(message);
                     message_edit_view.setText("");
                     Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
         return view;
     }
-
     private boolean ValidationMessage(String message) {
         return !message.equals("");
     }

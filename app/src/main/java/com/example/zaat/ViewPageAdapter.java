@@ -34,12 +34,11 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
             case 1:
                 return "Talk";
             case 2:
-                return "setting";
+                return "others";
             default:
                 return null;
         }
     }
-
     @Override
     public int getCount() {
         return 3;
