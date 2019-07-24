@@ -14,9 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences myPrefs;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +31,59 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().setElevation(0);
 
-        myPrefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        getUserData();
+        getDataFromDatabase();
+        updateSharedPref();
+
         ViewPageAdapter viewPageAdapter = new ViewPageAdapter(getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(viewPageAdapter);
         TabLayout tab = findViewById(R.id.tabs);
         tab.setupWithViewPager(viewPager);
+    }
+
+    private void getUserData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        user = new User(sharedPreferences.getString("uname", null),
+                sharedPreferences.getString("upassword", null),
+                sharedPreferences.getString("uid", null),
+                sharedPreferences.getString("ugender", null),
+                sharedPreferences.getString("ustatue", null),
+                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
+    }
+
+    private void getDataFromDatabase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        databaseReference.addValueEventListener((new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    User u = d.getValue(User.class);
+                    if (u.getuID().equals(user.getuID())) {
+                        user = u;
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        }));
+    }
+
+    private void updateSharedPref() {
+
+        myPrefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = myPrefs.edit();
+        editor.putString("uname", user.getuName());
+        editor.putString("upassword", user.getuPassword());
+        editor.putString("uid", user.uID);
+        editor.putString("ugender", user.getuGender());
+        editor.putString("ustatue", user.getUstatue());
+        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.apply();
     }
 
     @Override
@@ -40,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         this.finishAffinity();
     }
 

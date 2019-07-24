@@ -2,27 +2,21 @@ package com.example.zaat;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.io.ByteArrayOutputStream;
-
-import static android.app.Activity.RESULT_OK;
 
 
 public class TalkFragment extends Fragment {
@@ -62,24 +56,33 @@ public class TalkFragment extends Fragment {
         Save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isNetworkAvailable()) {
+                    message_to_zaat = message_edit_view.getText().toString();
 
-                message_to_zaat = message_edit_view.getText().toString();
+                    if (ValidationMessage(message_to_zaat)) {
 
-                if (ValidationMessage(message_to_zaat)) {
-
-                    databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
-                    message = new Message(message_to_zaat, user.uID);
-                    message.mID = databaseReference.push().getKey();
-                    databaseReference.child(message.mID).setValue(message);
-                    message_edit_view.setText("");
-                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
-                }
+                        databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
+                        message = new Message(message_to_zaat, user.uID);
+                        message.mID = databaseReference.push().getKey();
+                        databaseReference.child(message.mID).setValue(message);
+                        message_edit_view.setText("");
+                        Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                } else
+                    Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
             }
         });
         return view;
     }
+
     private boolean ValidationMessage(String message) {
         return !message.equals("");
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

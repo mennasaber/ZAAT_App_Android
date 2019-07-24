@@ -3,6 +3,8 @@ package com.example.zaat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -47,15 +49,18 @@ public class StatueActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                user.setUstatue(getstatue(spinner.getSelectedItemPosition()));
-                sharedPreferences.edit().clear();
-                updateStatue();
-                updateSharedpref();
-                Toast.makeText(StatueActivity.this, "Settings Updated", Toast.LENGTH_SHORT).show();
-                Intent MainIntent = new Intent(StatueActivity.this, MainActivity.class);
-                MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                MainIntent.putExtra("EXIT", true);
-                startActivity(MainIntent);
+                if (isNetworkAvailable()) {
+                    user.setUstatue(getstatue(spinner.getSelectedItemPosition()));
+                    sharedPreferences.edit().clear();
+                    updateStatue();
+                    updateSharedpref();
+                    Toast.makeText(StatueActivity.this, "Settings Updated", Toast.LENGTH_SHORT).show();
+                    Intent MainIntent = new Intent(StatueActivity.this, MainActivity.class);
+                    MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    MainIntent.putExtra("EXIT", true);
+                    startActivity(MainIntent);
+                } else
+                    Toast.makeText(StatueActivity.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -74,39 +79,45 @@ public class StatueActivity extends AppCompatActivity {
     }
 
     private void updateStatue() {
-          databaseReference.child(user.uID).addListenerForSingleValueEvent(new ValueEventListener() {
-              @Override
-              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                  dataSnapshot.getRef().setValue(user);
-              }
+        databaseReference.child(user.uID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().setValue(user);
+            }
 
-              @Override
-              public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-              }
-          });
+            }
+        });
     }
 
     private int getIndex() {
         if (user.getUstatue().equals("None"))
             return 0;
-        else if (user.getUstatue().equals("Speak"))
+        else if (user.getUstatue().equals("Talk"))
             return 1;
         else
             return 2;
     }
 
     private String getstatue(int selectedItemPosition) {
-        switch (selectedItemPosition)
-        {
+        switch (selectedItemPosition) {
             case 0:
                 return "None";
             case 1:
-                return "Speak";
-            case 2 :
+                return "Talk";
+            case 2:
                 return "Listen";
 
         }
         return null;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -28,6 +28,15 @@
         android:text="No Memories Today!"
         android:textColor="@color/colorDarkRed"
         android:visibility="gone" />
+    <TextView
+        android:id="@+id/no_connection_memories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Check Your Connection"
+        android:textColor="@color/colorDarkRed"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/list_memories"

@@ -2,6 +2,8 @@ package com.example.zaat;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -16,8 +18,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,7 +36,10 @@ public class MemoriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memories);
-
+        if (!isNetworkAvailable()) {
+            TextView t = findViewById(R.id.no_connection_memories);
+            t.setVisibility(View.VISIBLE);
+        }
         listMessages = new ArrayList<>();
         list = findViewById(R.id.list_memories);
         messageAdapter = new messageMemoriesAdapter(getApplicationContext(), 0, listMessages);
@@ -66,14 +71,14 @@ public class MemoriesActivity extends AppCompatActivity {
                             && !current_date[2].equals(past_date[2]))
                         listMessages.add(m);
                 }
-                if (listMessages.size() == 0) {
+                if (listMessages.size() == 0 && isNetworkAvailable()) {
                     TextView t = findViewById(R.id.no_memories);
                     t.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    TextView t = findViewById(R.id.no_memories);
-                    t.setVisibility(View.GONE);
+                } else {
+                    TextView t1 = findViewById(R.id.no_memories);
+                    t1.setVisibility(View.GONE);
+                    TextView t2 = findViewById(R.id.no_connection_memories);
+                    t2.setVisibility(View.GONE);
                 }
                 messageAdapter.notifyDataSetChanged();
             }
@@ -84,5 +89,13 @@ public class MemoriesActivity extends AppCompatActivity {
 
             }
         }));
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

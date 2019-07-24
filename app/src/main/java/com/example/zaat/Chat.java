@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +41,7 @@ public class Chat extends AppCompatActivity {
     ChatAdapter adapter;
     TextView text_message;
     Boolean inChatting;
+    Boolean active;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -57,9 +61,9 @@ public class Chat extends AppCompatActivity {
                                 user.setuInChat(false);
 
                                 clearDataOfChat();
-                                updateUsersData();
+                                clearDataOfChat_Messages();
                                 updateSharedpref();
-
+                                updateUsersData();
                                 Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
                                 LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 LoginIntent.putExtra("EXIT", true);
@@ -82,10 +86,13 @@ public class Chat extends AppCompatActivity {
 
     private void clearDataOfChat() {
         DatabaseReference d = FirebaseDatabase.getInstance().getReference()
-                .child("Chat_Messages").child(chatting.getmID());
-        d.removeValue();
-        d = FirebaseDatabase.getInstance().getReference()
                 .child("Chats").child(chatID);
+        d.removeValue();
+    }
+
+    private void clearDataOfChat_Messages() {
+        DatabaseReference d = FirebaseDatabase.getInstance().getReference()
+                .child("Chat_Messages").child(chatting.getmID());
         d.removeValue();
     }
 
@@ -125,34 +132,59 @@ public class Chat extends AppCompatActivity {
                     } else
                         inChatting = false;
                 }
-                if ((!inChatting) && user.getuInChat())
-                    closeActivity();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
+
         }));
 
         image_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String m = String.valueOf(text_message.getText());
-                if (!m.equals("")) {
-                    Message_chatting mess = new Message_chatting(user.uID, m);
-                    list_message.add(mess);
-                    text_message.setText("");
-                    updateChat();
+                if (isNetworkAvailable()) {
+                    String m = String.valueOf(text_message.getText());
+                    if (!m.equals("")) {
+                        Message_chatting mess = new Message_chatting(user.uID, m);
+                        list_message.add(mess);
+                        text_message.setText("");
+                        updateChat();
+                    }
+                } else
+                    Toast.makeText(Chat.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        databaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    User u = d.getValue(User.class);
+                    if (u.getuID().equals(user.getuID())) {
+                        user = u;
+                        break;
+                    }
                 }
+                if (!user.getuInChat() && active) {
+                    Toast.makeText(Chat.this, "Chat Ended", Toast.LENGTH_SHORT).show();
+                    closeActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
     }
 
     private void closeActivity() {
-        Intent startChatIntent = new Intent(Chat.this, StartchatActivity.class);
-        startChatIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startChatIntent.putExtra("EXIT", true);
-        startActivity(startChatIntent);
+        updateChat();
+        Intent MainIntent = new Intent(Chat.this, MainActivity.class);
+        MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        MainIntent.putExtra("EXIT", true);
+        startActivity(MainIntent);
     }
 
     private void scrollListView() {
@@ -172,6 +204,7 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        active = true;
         mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
         mdaDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -215,5 +248,18 @@ public class Chat extends AppCompatActivity {
         main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         main.putExtra("EXIT", true);
         startActivity(main);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        active = false;
     }
 }

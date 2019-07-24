@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,19 +51,19 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final String mId = listMessages.get(i).getmID();
 
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Delete")
-                            .setMessage("Are you sure you want to delete this?")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    DatabaseReference d = FirebaseDatabase.getInstance().getReference()
-                                            .child("Messages").child(mId);
-                                    d.removeValue();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, null)
-                            .setIcon(R.drawable.danger)
-                            .show();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to delete this?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                DatabaseReference d = FirebaseDatabase.getInstance().getReference()
+                                        .child("Messages").child(mId);
+                                d.removeValue();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(R.drawable.danger)
+                        .show();
 
             }
         });
@@ -71,8 +73,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
+        if (!isNetworkAvailable()) {
+            TextView t = view.findViewById(R.id.no_connection);
+            t.setVisibility(View.VISIBLE);
+        }
         databaseReference.addValueEventListener((new ValueEventListener() {
 
             @Override
@@ -92,15 +96,14 @@ public class HomeFragment extends Fragment {
                         if (m.getuID().equals(user.uID))
                             listMessages.add(m);
                     }
-                    if(listMessages.size()==0)
-                    {
+                    if (listMessages.size() == 0 && isNetworkAvailable()) {
                         TextView t = view.findViewById(R.id.no_memories_home);
                         t.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        TextView t = view.findViewById(R.id.no_memories_home);
-                        t.setVisibility(View.GONE);
+                    } else {
+                        TextView t1 = view.findViewById(R.id.no_memories_home);
+                        t1.setVisibility(View.GONE);
+                        TextView t2 = view.findViewById(R.id.no_connection);
+                        t2.setVisibility(View.GONE);
                     }
                     messageAdapter.notifyDataSetChanged();
                 }
@@ -118,5 +121,12 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

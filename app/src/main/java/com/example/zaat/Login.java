@@ -3,6 +3,8 @@ package com.example.zaat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +38,6 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
         Username_text_view = findViewById(R.id.username_login);
@@ -49,18 +50,21 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                if (isNetworkAvailable()) {
+                    uName = Username_text_view.getText().toString();
+                    uPassword = password_text_view.getText().toString();
 
-                uName = Username_text_view.getText().toString();
-                uPassword = password_text_view.getText().toString();
-
-                if (CheckValidUser(uName, uPassword)) {
-                    SaveData(user);
-                    Intent MainIntent = new Intent(Login.this, MainActivity.class);
-                    MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    MainIntent.putExtra("EXIT", true);
-                    startActivity(MainIntent);
+                    if (CheckValidUser(uName, uPassword)) {
+                        SaveData(user);
+                        Intent MainIntent = new Intent(Login.this, MainActivity.class);
+                        MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        MainIntent.putExtra("EXIT", true);
+                        startActivity(MainIntent);
+                    } else
+                        Toast.makeText(Login.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
                 } else
-                    Toast.makeText(Login.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -73,6 +77,7 @@ public class Login extends AppCompatActivity {
                 startActivity(resIntent);
             }
         });
+
     }
 
 
@@ -131,6 +136,13 @@ public class Login extends AppCompatActivity {
         editor.putString("ustatue", user.getUstatue());
         editor.putString("uinchat", String.valueOf(user.getuInChat()));
         editor.apply();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

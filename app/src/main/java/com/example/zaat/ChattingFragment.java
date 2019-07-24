@@ -3,11 +3,14 @@ package com.example.zaat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,7 +27,6 @@ public class ChattingFragment extends Fragment {
     User user;
     SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
-    boolean inchat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,17 +62,25 @@ public class ChattingFragment extends Fragment {
             relativeLayout_statue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent statueIntent = new Intent(getActivity().getApplicationContext(), StatueActivity.class);
-                    startActivity(statueIntent);
-
+                    if (!isNetworkAvailable()) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent statueIntent = new Intent(getActivity().getApplicationContext(), StatueActivity.class);
+                        startActivity(statueIntent);
+                    }
                 }
             });
             RelativeLayout relativeLayout_profile = view.findViewById(R.id.profile);
             relativeLayout_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent profileIntent = new Intent(getActivity().getApplicationContext(), ProfileActivity.class);
-                    startActivity(profileIntent);
+                    if (!isNetworkAvailable()) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent profileIntent = new Intent(getActivity().getApplicationContext(), ProfileActivity.class);
+                        startActivity(profileIntent);
+                    }
+
 
                 }
             });
@@ -78,15 +88,18 @@ public class ChattingFragment extends Fragment {
             relativeLayout_chat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!user.getuInChat()) {
-                        Intent startChatIntent = new Intent(getActivity().getApplicationContext(), StartchatActivity.class);
-                        startActivity(startChatIntent);
-                    } else {
-                        user.setuInChat(true);
-                        updateSharedpref();
-                        Intent chatIntent = new Intent(getActivity().getApplicationContext(), Chat.class);
-                        startActivity(chatIntent);
-                    }
+                    if (isNetworkAvailable()) {
+                        if (!user.getuInChat()) {
+                            Intent startChatIntent = new Intent(getActivity().getApplicationContext(), StartchatActivity.class);
+                            startActivity(startChatIntent);
+                        } else {
+                            user.setuInChat(true);
+                            updateSharedpref();
+                            Intent chatIntent = new Intent(getActivity().getApplicationContext(), Chat.class);
+                            startActivity(chatIntent);
+                        }
+                    } else
+                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -94,19 +107,16 @@ public class ChattingFragment extends Fragment {
             relativeLayout_memories.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent memoriesIntent = new Intent(getActivity().getApplicationContext(), MemoriesActivity.class);
-                    startActivity(memoriesIntent);
-
+                    if (isNetworkAvailable()) {
+                        Intent memoriesIntent = new Intent(getActivity().getApplicationContext(), MemoriesActivity.class);
+                        startActivity(memoriesIntent);
+                    } else
+                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
         return view;
-    }
-
-    private boolean checkValidation() {
-
-        return inchat;
     }
 
     private void updateSharedpref() {
@@ -119,5 +129,15 @@ public class ChattingFragment extends Fragment {
         editor.putString("ustatue", user.getUstatue());
         editor.putString("uinchat", String.valueOf(user.getuInChat()));
         editor.apply();
+    }
+
+    private boolean isNetworkAvailable() {
+
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+
+
     }
 }
