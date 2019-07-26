@@ -68,8 +68,8 @@ public class StartchatActivity extends AppCompatActivity {
                             for (DataSnapshot d : dataSnapshot.getChildren()) {
                                 User u = d.getValue(User.class);
                                 if (!u.uID.equals(user.uID) && !u.getUstatue().equals(user.getUstatue()) &&
-                                        !u.getuInChat().equals(true) && !u.getUstatue().equals("None") &&
-                                        !user.getUstatue().equals("None") &&
+                                        !u.getuInChat().equals(true) && !u.getUstatue().equals("0") &&
+                                        !user.getUstatue().equals("0") &&
                                         u.getuGender().equals(getGender(rMale, rFemale))) {
                                     listUser.add(u);
                                 }
@@ -97,11 +97,11 @@ public class StartchatActivity extends AppCompatActivity {
 
                                 Intent intent = new Intent(getApplicationContext(), Chat.class);
                                 startActivity(intent);
-                            } else if (user.getUstatue().equals("None")) {
-                                Toast.makeText(StartchatActivity.this, "Your Statue is 'None', Change it", Toast.LENGTH_SHORT).show();
+                            } else if (user.getUstatue().equals("0")) {
+                                Toast.makeText(StartchatActivity.this, getResources().getString(R.string.statueMute), Toast.LENGTH_SHORT).show();
 
                             } else {
-                                Toast.makeText(StartchatActivity.this, "there's not available person", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(StartchatActivity.this, getResources().getString(R.string.noPersonAvailabe), Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -112,7 +112,7 @@ public class StartchatActivity extends AppCompatActivity {
                         }
                     });
                 } else
-                    Toast.makeText(StartchatActivity.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StartchatActivity.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -120,9 +120,9 @@ public class StartchatActivity extends AppCompatActivity {
 
     private String getGender(RadioButton rMale, RadioButton rFemale) {
         if (rMale.isChecked())
-            return "male";
+            return "0";
         else
-            return "female";
+            return "1";
     }
 
     private void updateSharedpref() {

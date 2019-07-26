@@ -59,7 +59,7 @@ public class registration extends AppCompatActivity {
                     if (ValidationUser(username, password) && !userExist()) {
 
                         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-                        user = new User(username.trim(), password, getGender(radioButton_female, radioButton_male), "None", false);
+                        user = new User(username.trim(), password, getGender(radioButton_female, radioButton_male), "0", false);
                         user.setuID(databaseReference.push().getKey());
 
                         databaseReference.child(user.uID).setValue(user);
@@ -72,12 +72,12 @@ public class registration extends AppCompatActivity {
                         startActivity(MainIntent);
 
                     } else if (userExist()) {
-                        Toast.makeText(registration.this, "That username is token. Try another", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(registration.this, getResources().getString(R.string.userExist), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(registration.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(registration.this, getResources().getString(R.string.inValidLogin), Toast.LENGTH_SHORT).show();
                     }
                 } else
-                    Toast.makeText(registration.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(registration.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -94,9 +94,9 @@ public class registration extends AppCompatActivity {
 
     private String getGender(RadioButton radioButton_female, RadioButton radioButton_male) {
         if (radioButton_female.isChecked())
-            return "female";
+            return "1";
         else if (radioButton_male.isChecked())
-            return "male";
+            return "0";
         return null;
     }
 

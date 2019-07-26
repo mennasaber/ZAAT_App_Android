@@ -50,17 +50,17 @@ public class StatueActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
-                    user.setUstatue(getstatue(spinner.getSelectedItemPosition()));
+                    user.setUstatue(String.valueOf(spinner.getSelectedItemPosition()));
                     sharedPreferences.edit().clear();
                     updateStatue();
                     updateSharedpref();
-                    Toast.makeText(StatueActivity.this, "Settings Updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StatueActivity.this, getResources().getString(R.string.updateStatue), Toast.LENGTH_SHORT).show();
                     Intent MainIntent = new Intent(StatueActivity.this, MainActivity.class);
                     MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     MainIntent.putExtra("EXIT", true);
                     startActivity(MainIntent);
                 } else
-                    Toast.makeText(StatueActivity.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StatueActivity.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -93,9 +93,9 @@ public class StatueActivity extends AppCompatActivity {
     }
 
     private int getIndex() {
-        if (user.getUstatue().equals("None"))
+        if (user.getUstatue().equals("0"))
             return 0;
-        else if (user.getUstatue().equals("Talk"))
+        else if (user.getUstatue().equals("1"))
             return 1;
         else
             return 2;
@@ -104,7 +104,7 @@ public class StatueActivity extends AppCompatActivity {
     private String getstatue(int selectedItemPosition) {
         switch (selectedItemPosition) {
             case 0:
-                return "None";
+                return "0";
             case 1:
                 return "Talk";
             case 2:

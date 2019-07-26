@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
     SharedPreferences myPrefs;
     User user;
+    String[] tabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,20 @@ public class MainActivity extends AppCompatActivity {
         getDataFromDatabase();
         updateSharedPref();
 
-        ViewPageAdapter viewPageAdapter = new ViewPageAdapter(getSupportFragmentManager());
+        String home = getResources().getString(R.string.home);
+        String talk = getResources().getString(R.string.talk);
+        String others = getResources().getString(R.string.others);
+
+        tabs = new String[]{home,talk,others};
+
+
+        ViewPageAdapter viewPageAdapter = new ViewPageAdapter(getSupportFragmentManager(), tabs);
         ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(viewPageAdapter);
         TabLayout tab = findViewById(R.id.tabs);
         tab.setupWithViewPager(viewPager);
     }
+
 
     private void getUserData() {
         SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);

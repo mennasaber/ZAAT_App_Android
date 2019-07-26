@@ -23,7 +23,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="130dp"
         android:background="@color/colorDarkRed"
-        android:text="Update"
+        android:text="@string/buttonUpdate"
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
 

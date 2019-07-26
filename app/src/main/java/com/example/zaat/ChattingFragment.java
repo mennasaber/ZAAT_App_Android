@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -58,24 +59,24 @@ public class ChattingFragment extends Fragment {
             }
         }));
         if (isAdded()) {
-            RelativeLayout relativeLayout_statue = view.findViewById(R.id.statue);
-            relativeLayout_statue.setOnClickListener(new View.OnClickListener() {
+            LinearLayout linearLayout_statue = view.findViewById(R.id.statue);
+            linearLayout_statue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (!isNetworkAvailable()) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                     } else {
                         Intent statueIntent = new Intent(getActivity().getApplicationContext(), StatueActivity.class);
                         startActivity(statueIntent);
                     }
                 }
             });
-            RelativeLayout relativeLayout_profile = view.findViewById(R.id.profile);
-            relativeLayout_profile.setOnClickListener(new View.OnClickListener() {
+            LinearLayout linearLayout_profile = view.findViewById(R.id.profile);
+            linearLayout_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (!isNetworkAvailable()) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                     } else {
                         Intent profileIntent = new Intent(getActivity().getApplicationContext(), ProfileActivity.class);
                         startActivity(profileIntent);
@@ -84,8 +85,8 @@ public class ChattingFragment extends Fragment {
 
                 }
             });
-            RelativeLayout relativeLayout_chat = view.findViewById(R.id.chatting);
-            relativeLayout_chat.setOnClickListener(new View.OnClickListener() {
+            LinearLayout linearLayout_chat = view.findViewById(R.id.chatting);
+            linearLayout_chat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (isNetworkAvailable()) {
@@ -99,19 +100,19 @@ public class ChattingFragment extends Fragment {
                             startActivity(chatIntent);
                         }
                     } else
-                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                 }
 
             });
-            RelativeLayout relativeLayout_memories = view.findViewById(R.id.memories);
-            relativeLayout_memories.setOnClickListener(new View.OnClickListener() {
+            LinearLayout linearLayout_memories = view.findViewById(R.id.memories);
+            linearLayout_memories.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (isNetworkAvailable()) {
                         Intent memoriesIntent = new Intent(getActivity().getApplicationContext(), MemoriesActivity.class);
                         startActivity(memoriesIntent);
                     } else
-                        Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                 }
             });
         }

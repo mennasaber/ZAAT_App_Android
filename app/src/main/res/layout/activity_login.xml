@@ -26,7 +26,7 @@
             android:layout_below="@id/icon"
             android:layout_marginBottom="60dp"
             android:backgroundTint="@color/colorDarkRed"
-            android:hint="Username" />
+            android:hint="@string/username" />
 
         <EditText
             android:id="@+id/password_login"
@@ -35,7 +35,7 @@
             android:layout_below="@id/username_login"
             android:layout_marginBottom="40dp"
             android:backgroundTint="@color/colorDarkRed"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
 
 
@@ -48,7 +48,7 @@
             android:layout_marginTop="60dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
-            android:text="SignIn"
+            android:text="@string/login"
             android:textColor="@color/colorWhite"
             android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp"
-            android:text="Don't have Email?"
+            android:text="@string/createAccount"
             android:textColor="@color/colorRed" />
     </RelativeLayout>
 </ScrollView>

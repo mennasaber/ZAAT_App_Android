@@ -14,7 +14,7 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorWhite"
         android:gravity="center"
-        android:text="Start Chat"
+        android:text="@string/startLabel"
         android:textAllCaps="true"
         android:textColor="@color/colorDarkRed"
         android:textSize="20sp"
@@ -27,9 +27,10 @@
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
+        android:padding="10dp"
         android:layout_marginTop="20dp"
         android:gravity="center_vertical"
-        android:text="Person Gender"
+        android:text="@string/personGender"
         android:textColor="@color/colorDarkRed"
         android:textSize="15sp" />
 
@@ -48,14 +49,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:buttonTint="@color/colorDarkRed"
-            android:text="Male" />
+            android:text="@string/male" />
 
         <RadioButton
             android:id="@+id/femaleChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@color/colorDarkRed"
-            android:text="Female" />
+            android:text="@string/female" />
     </RadioGroup>
 
 
@@ -66,7 +67,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="150dp"
         android:background="@color/colorDarkRed"
-        android:text="Start"
+        android:text="@string/startButton"
         android:textColor="@color/colorWhite" />
 
 </LinearLayout>

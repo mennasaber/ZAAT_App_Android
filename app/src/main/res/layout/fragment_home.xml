@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="No Memories Yet"
+        android:text="@string/noMemoriesHome"
         android:textColor="@color/colorDarkRed"
         android:visibility="gone" />
 
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="Check Your Connection"
+        android:text="@string/noConnection"
         android:textColor="@color/colorDarkRed"
         android:visibility="gone" />
 

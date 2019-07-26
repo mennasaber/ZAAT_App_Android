@@ -1,14 +1,88 @@
 <resources>
     <string name="app_name">ZAAT</string>
-    <string name="zaat_message">"I Am here to you, share with me bad and good memories .
+
+    <!--Login activity-->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">signIn</string>
+    <string name="createAccount">Do not Have Email?</string>
+
+    <!--registration activity-->
+    <string name="signUp">signUp</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+
+    <!--Main activity-->
+    <string name="home">Home</string>
+    <string name="talk">Talk</string>
+    <string name="others">Others</string>
+    <string name="logout">LogOut</string>
+
+    <!--memories activity-->
+    <string name="memoriesLabel">Memories</string>
+    <string name="noMemories">No Memories Today!</string>
+
+    <!--profile activity-->
+    <string name="profileLabel">Profile</string>
+    <string name="gender">Gender</string>
+    <string name="inChat">In Chat?</string>
+    <string name="statue">Statue</string>
+
+
+
+    <!--Statues activity-->
+    <string name="buttonUpdate">Update</string>
+
+
+    <!--Home activity-->
+    <string name="noMemoriesHome">No Memories Yet</string>
+    <string name="noConnection">Check Your Connection</string>
+
+    <!--Talk activity-->
+    <string name="helloText">Hello My Friend</string>
+    <string name="zaat_message">"I Am here to you, share with me sad and happy memories .
 Sure that i will be here every time you need me not like others let you alone,
 So don't let anything inside you without telling me it :)"</string>
+    <string name="saveButton">Save</string>
+
+
+    <!--items-->
+    <string name="chatting">Chatting</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="listofstatues">
-        <item>"None"</item>
+        <item>"Mute"</item>
         <item>"Talk"</item>
         <item>"Listen"</item>
     </string-array>
+
+    <!--statues-->
+    <string name="mute">Mute</string>
+    <string name="talkStatue">Talk</string>
+    <string name="listen">Listen</string>
+
+
+    <!--In Chat-->
+    <string name="inchatProfile">True</string>
+    <string name="notinchat">False</string>
+
+    <!--Start Chat-->
+    <string name="personGender">Gender of Person who will chat with you</string>
+    <string name="startLabel">Start Chat</string>
+    <string name="startButton">Start</string>
+
+    <!--Toasts-->
+    <string name="inValidLogin">Username or Password not valid</string>
+    <string name="userExist">That username is token. Try another</string>
+    <string name="statueMute">"Your Statue is 'Mute', Change it"</string>
+    <string name="noPersonAvailabe">"there's no available person"</string>
+    <string name="updateStatue">Statue Updated</string>
+    <string name="saveMemory">Memory Saved</string>
+    <string name="invalidMemory">InValid Memory</string>
+    <string name="endChat">Chat Ended</string>
+
+    <!--Dialog-->
+    <string name="delete">Delete</string>
+    <string name="deleteMemory">Are you sure you want to delete this?</string>
+    <string name="deleteChat">Are you sure you want to end this conversation?</string>
 </resources>

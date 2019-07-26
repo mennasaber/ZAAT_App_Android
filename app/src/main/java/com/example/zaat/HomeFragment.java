@@ -52,8 +52,8 @@ public class HomeFragment extends Fragment {
                 final String mId = listMessages.get(i).getmID();
 
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete")
-                        .setMessage("Are you sure you want to delete this?")
+                        .setTitle(getResources().getString(R.string.delete))
+                        .setMessage(getResources().getString(R.string.deleteMemory))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference d = FirebaseDatabase.getInstance().getReference()

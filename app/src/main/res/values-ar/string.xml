@@ -1,2 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">ذات</string>
+
+    <!--Login activity-->
+    <string name="username">اسم المستخدم</string>
+    <string name="password">كلمه المرور</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="createAccount">ليس لديك حساب؟</string>
+
+    <!--registration activity-->
+    <string name="signUp">تسجيل حساب</string>
+    <string name="male">ذكر</string>
+    <string name="female">انثى</string>
+
+    <!--Main activity-->
+    <string name="home">الرئيسيه</string>
+    <string name="talk">َعبّر</string>
+    <string name="others">المزيد</string>
+    <string name="logout">تسجيل الخروج</string>
+
+    <!--memories activity-->
+    <string name="memoriesLabel">الذكريات</string>
+    <string name="noMemories">ليس لديك ذكريات اليوم!</string>
+
+    <!--profile activity-->
+    <string name="profileLabel">الصفحه الشخصيه</string>
+    <string name="gender">النوع</string>
+    <string name="inChat">فى محادثة؟</string>
+    <string name="statue">الحاله</string>
+
+    <!--Statues activity-->
+    <string name="buttonUpdate">تحديث</string>
+
+    <!--Home activity-->
+    <string name="noMemoriesHome">ليس لديك مذكرات</string>
+    <string name="noConnection">فشل الاتصال بالانترنت</string>
+
+    <!--Talk activity-->
+    <string name="helloText">مرحبا بك يا صديقي</string>
+    <string name="zaat_message">"انا هنا من أجلك لكى اشاركك فى ذكرياتك السعيده والحزينه. تأكد اننى سوف اكون هنا فى كل وقت تحتاجنى فيه ولست كالبقيه اتركك وحيدا لذلك لا تترك اى شئ بداخلك دون ان تخبرنى اياه لنحزن ونفرح سويا :)"</string>
+    <string name="saveButton">حفظ</string>
+
+
+
+    <!--items-->
+    <string name="chatting">المحادثه</string>
+
+    <string-array name="listofstatues">
+        <item>"كتم"</item>
+        <item>"التحدث"</item>
+        <item>"الاستماع"</item>
+    </string-array>
+
+
+    <!--statues-->
+    <string name="mute">كتم</string>
+    <string name="talkStatue">التحدث</string>
+    <string name="listen">الاستماع</string>
+
+    <!--In Chat-->
+    <string name="inchatProfile">نعم</string>
+    <string name="notinchat">لا</string>
+
+    <!--Start Chat-->
+    <string name="personGender">نوع الشخص الذى تريد ان يحدثك</string>
+    <string name="startLabel">بدء المحادثة</string>
+    <string name="startButton">بدء</string>
+
+    <!--Toasts-->
+    <string name="inValidLogin">اسم المستخدم او كلمه المرور غير صحيحه</string>
+    <string name="userExist">ذلك الاسم لدى مستخدم اخر</string>
+    <string name="statueMute">"لا يمكنك المحادثه حالتك هى 'كتم'"</string>
+    <string name="noPersonAvailabe">"لا يوجد شخص متوفر الان"</string>
+    <string name="updateStatue">تم تحديث الحاله</string>
+    <string name="saveMemory">تم حفظ الذكرى</string>
+    <string name="invalidMemory">قم بكتابه شئ الذكرى فارغه</string>
+    <string name="endChat">تم انهاء المحادثه</string>
+
+    <!--Dialog-->
+    <string name="delete">حذف</string>
+    <string name="deleteMemory">هل انت متأكد انك تريد حذف هذا؟</string>
+    <string name="deleteChat">هل انت متأكد انك تريد انهاء تلك المحادثة؟</string>
+</resources>

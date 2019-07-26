@@ -61,9 +61,9 @@ public class Login extends AppCompatActivity {
                         MainIntent.putExtra("EXIT", true);
                         startActivity(MainIntent);
                     } else
-                        Toast.makeText(Login.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, getResources().getString(R.string.inValidLogin), Toast.LENGTH_SHORT).show();
                 } else
-                    Toast.makeText(Login.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
 
             }
         });

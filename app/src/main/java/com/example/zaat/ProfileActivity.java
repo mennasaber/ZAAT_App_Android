@@ -37,9 +37,41 @@ public class ProfileActivity extends AppCompatActivity {
         statue = findViewById(R.id.statue_text);
         inchat = findViewById(R.id.inchat_text);
         username.setText(user.getuName());
-        gender.setText(user.getuGender());
-        statue.setText(user.getUstatue());
-        inchat.setText(String.valueOf(user.getuInChat()));
+        gender.setText(getGender());
+        statue.setText(getStatue());
+        inchat.setText(getInchat());
+    }
+
+    private String getInchat() {
+        String s = String.valueOf(user.getuInChat());
+        switch (s) {
+            case "true":
+                return getResources().getString(R.string.inchatProfile);
+            default:
+                return getResources().getString(R.string.notinchat);
+        }
+    }
+
+    private String getStatue() {
+        switch (user.getUstatue()) {
+            case "0":
+                return getResources().getString(R.string.mute);
+            case "1":
+                return getResources().getString(R.string.talkStatue);
+            default:
+                return getResources().getString(R.string.listen);
+        }
+    }
+
+    private String getGender() {
+        switch (user.getuGender()) {
+            case "0":
+                return getResources().getString(R.string.male);
+            case "1":
+                return getResources().getString(R.string.female);
+            default:
+                return "Male";
+        }
     }
 
     private void getData() {
@@ -51,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
                 sharedPreferences.getString("ustatue", null),
                 Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
 
-    DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

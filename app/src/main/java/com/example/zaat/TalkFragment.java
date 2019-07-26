@@ -66,12 +66,12 @@ public class TalkFragment extends Fragment {
                         message.mID = databaseReference.push().getKey();
                         databaseReference.child(message.mID).setValue(message);
                         message_edit_view.setText("");
-                        Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.saveMemory), Toast.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(getActivity().getApplicationContext(), "Not a Valid Memory", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.invalidMemory), Toast.LENGTH_SHORT).show();
 
                 } else
-                    Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
         return view;

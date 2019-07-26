@@ -28,7 +28,7 @@
             android:layout_below="@id/icon"
             android:layout_marginBottom="60dp"
             android:backgroundTint="@color/colorDarkRed"
-            android:hint="Username" />
+            android:hint="@string/username" />
 
         <EditText
             android:id="@+id/password_registration"
@@ -37,7 +37,7 @@
             android:layout_below="@id/username_registration"
             android:layout_marginBottom="60dp"
             android:backgroundTint="@color/colorDarkRed"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
 
         <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
@@ -55,16 +55,16 @@
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
-                android:text="Male"
+                android:text="@string/male"
                 android:textColor="@color/colorDarkRed" />
 
             <RadioButton
                 android:id="@+id/female_radio_button"
-                android:layout_width="match_parent"
+                android:layout_width="146dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
-                android:text="Female"
+                android:text="@string/female"
                 android:textColor="@color/colorDarkRed" />
         </RadioGroup>
 
@@ -78,7 +78,7 @@
             android:maxHeight="40dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
-            android:text="SignUp"
+            android:text="@string/signUp"
             android:textColor="@color/colorWhite"
             android:textStyle="bold" />
     </RelativeLayout>

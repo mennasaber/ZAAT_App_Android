@@ -4,5 +4,5 @@
     tools:context="com.sartainstudios.contacts.AddContact">
     <item
         android:id="@+id/logout"
-        android:title="LogOut" />
+        android:title="@string/logout" />
 </menu>

@@ -54,20 +54,23 @@ public class Chat extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.no_chat_action:
                 new AlertDialog.Builder(Chat.this)
-                        .setTitle("Delete")
-                        .setMessage("Are you sure you want to end this conversation?")
+                        .setTitle(getResources().getString(R.string.delete))
+                        .setMessage(getResources().getString(R.string.deleteChat))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                user.setuInChat(false);
+                                if (isNetworkAvailable()) {
+                                    user.setuInChat(false);
 
-                                clearDataOfChat();
-                                clearDataOfChat_Messages();
-                                updateSharedpref();
-                                updateUsersData();
-                                Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
-                                LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                LoginIntent.putExtra("EXIT", true);
-                                startActivity(LoginIntent);
+                                    clearDataOfChat();
+                                    clearDataOfChat_Messages();
+                                    updateSharedpref();
+                                    updateUsersData();
+                                    Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
+                                    LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    LoginIntent.putExtra("EXIT", true);
+                                    startActivity(LoginIntent);
+                                } else
+                                    Toast.makeText(Chat.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton(android.R.string.no, null)
@@ -145,14 +148,14 @@ public class Chat extends AppCompatActivity {
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
                     String m = String.valueOf(text_message.getText());
-                    if (m.trim().length()!=0) {
+                    if (m.trim().length() != 0) {
                         Message_chatting mess = new Message_chatting(user.uID, m);
                         list_message.add(mess);
                         text_message.setText("");
                         updateChat();
                     }
                 } else
-                    Toast.makeText(Chat.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Chat.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
@@ -167,7 +170,7 @@ public class Chat extends AppCompatActivity {
                     }
                 }
                 if (!user.getuInChat() && active) {
-                    Toast.makeText(Chat.this, "Chat Ended", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Chat.this, getResources().getString(R.string.endChat), Toast.LENGTH_SHORT).show();
                     closeActivity();
                 }
             }

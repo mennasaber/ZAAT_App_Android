@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:background="@color/colorLightRed"
         android:gravity="center"
-        android:text="Memories"
+        android:text="@string/memoriesLabel"
         android:textAllCaps="true"
         android:textColor="@color/colorDarkRed"
         android:textSize="20sp"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="No Memories Today!"
+        android:text="@string/noMemories"
         android:textColor="@color/colorDarkRed"
         android:visibility="gone" />
     <TextView
