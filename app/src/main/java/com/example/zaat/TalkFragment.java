@@ -62,12 +62,14 @@ public class TalkFragment extends Fragment {
                     if (ValidationMessage(message_to_zaat)) {
 
                         databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
-                        message = new Message(message_to_zaat, user.uID);
+                        message = new Message(message_to_zaat.trim(), user.uID);
                         message.mID = databaseReference.push().getKey();
                         databaseReference.child(message.mID).setValue(message);
                         message_edit_view.setText("");
                         Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
-                    }
+                    } else
+                        Toast.makeText(getActivity().getApplicationContext(), "Not a Valid Memory", Toast.LENGTH_SHORT).show();
+
                 } else
                     Toast.makeText(getActivity().getApplicationContext(), "Check Your Connection", Toast.LENGTH_SHORT).show();
             }
@@ -76,7 +78,7 @@ public class TalkFragment extends Fragment {
     }
 
     private boolean ValidationMessage(String message) {
-        return !message.equals("");
+        return message.trim().length() != 0;
     }
 
     private boolean isNetworkAvailable() {

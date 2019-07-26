@@ -45,23 +45,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/password_registration"
-            android:checkedButton="@id/male_radio_button"
             android:layout_marginBottom="20dp"
-            android:orientation="horizontal"
-            >
+            android:checkedButton="@id/male_radio_button"
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/male_radio_button"
                 android:layout_width="146dp"
                 android:layout_height="match_parent"
-                android:buttonTint="@color/colorDarkRed"
                 android:layout_marginBottom="20dp"
+                android:buttonTint="@color/colorDarkRed"
                 android:text="Male"
                 android:textColor="@color/colorDarkRed" />
 
             <RadioButton
                 android:id="@+id/female_radio_button"
-                android:layout_width="146dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
@@ -72,15 +71,15 @@
         <Button
             android:id="@+id/signUp"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@id/radio_group"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:maxHeight="40dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
             android:text="SignUp"
             android:textColor="@color/colorWhite"
             android:textStyle="bold" />
-
-
     </RelativeLayout>
 </ScrollView>

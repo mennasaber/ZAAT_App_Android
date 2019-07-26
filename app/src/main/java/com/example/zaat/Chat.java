@@ -145,7 +145,7 @@ public class Chat extends AppCompatActivity {
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
                     String m = String.valueOf(text_message.getText());
-                    if (!m.equals("")) {
+                    if (m.trim().length()!=0) {
                         Message_chatting mess = new Message_chatting(user.uID, m);
                         list_message.add(mess);
                         text_message.setText("");

@@ -12,10 +12,16 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class registration extends AppCompatActivity {
 
@@ -28,6 +34,7 @@ public class registration extends AppCompatActivity {
     RadioButton radioButton_male;
     String username;
     String password;
+    ArrayList<User> listUser = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +56,10 @@ public class registration extends AppCompatActivity {
                     username = username_textView.getText().toString();
                     password = password_textView.getText().toString();
 
-                    if (ValidationUser(username, password)) {
+                    if (ValidationUser(username, password) && !userExist()) {
 
                         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-                        user = new User(username, password, getGender(radioButton_female, radioButton_male), "None", false);
+                        user = new User(username.trim(), password, getGender(radioButton_female, radioButton_male), "None", false);
                         user.setuID(databaseReference.push().getKey());
 
                         databaseReference.child(user.uID).setValue(user);
@@ -63,15 +70,27 @@ public class registration extends AppCompatActivity {
                         MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         MainIntent.putExtra("EXIT", true);
                         startActivity(MainIntent);
+
+                    } else if (userExist()) {
+                        Toast.makeText(registration.this, "That username is token. Try another", Toast.LENGTH_SHORT).show();
                     } else {
+                        Toast.makeText(registration.this, "Username or Password not valid", Toast.LENGTH_SHORT).show();
                     }
                 } else
                     Toast.makeText(registration.this, "Check Your Connection", Toast.LENGTH_SHORT).show();
             }
-
         });
 
     }
+
+    private boolean userExist() {
+        for (int i = 0; i < listUser.size(); i++) {
+            if (listUser.get(i).getuName().equals(username.trim()))
+                return true;
+        }
+        return false;
+    }
+
 
     private String getGender(RadioButton radioButton_female, RadioButton radioButton_male) {
         if (radioButton_female.isChecked())
@@ -81,8 +100,8 @@ public class registration extends AppCompatActivity {
         return null;
     }
 
-    private boolean ValidationUser(String username, String password) {
-        return !username.equals("") && !password.equals("");
+    private boolean ValidationUser(final String username, String password) {
+        return username.trim().length() != 0 && password.trim().length() != 0;
     }
 
     private void SaveData(User user) {
@@ -102,5 +121,27 @@ public class registration extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener((new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                listUser.clear();
+
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    User u = d.getValue(User.class);
+                    listUser.add(u);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        }));
     }
 }
