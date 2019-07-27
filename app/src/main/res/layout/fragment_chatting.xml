@@ -100,7 +100,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:padding="20dp"
-                    android:src="@drawable/profile_icon" />
+                    android:src="@drawable/past" />
 
                 <TextView
                     android:layout_width="match_parent"
