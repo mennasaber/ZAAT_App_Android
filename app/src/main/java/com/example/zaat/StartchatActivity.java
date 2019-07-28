@@ -33,11 +33,14 @@ public class StartchatActivity extends AppCompatActivity {
     ChatClass chat;
     RadioButton rMale;
     RadioButton rFemale;
+    int numOfClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startchat);
+
+        numOfClick = 0;
         button_Start = findViewById(R.id.startChat);
         listUser = new ArrayList<>();
 
@@ -53,7 +56,7 @@ public class StartchatActivity extends AppCompatActivity {
         button_Start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isNetworkAvailable()) {
+                if (isNetworkAvailable()&&numOfClick<2) {
                     rMale = findViewById(R.id.maleChat);
                     rFemale = findViewById(R.id.femaleChat);
 
@@ -75,6 +78,8 @@ public class StartchatActivity extends AppCompatActivity {
                                 }
                             }
                             if (listUser.size() > 0) {
+
+                                numOfClick += 1;
 
                                 DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Chats");
                                 DatabaseReference mdatabaseRef = FirebaseDatabase.getInstance().getReference("Chat_Messages");
