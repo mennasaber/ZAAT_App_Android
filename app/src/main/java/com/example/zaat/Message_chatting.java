@@ -1,22 +1,22 @@
 package com.example.zaat;
 
 public class Message_chatting {
-    private String uID;
+    private int uID;
     private String Message;
 
     public Message_chatting() {
     }
 
-    public Message_chatting(String uID, String message) {
+    public Message_chatting(int uID, String message) {
         this.uID = uID;
         Message = message;
     }
 
-    public String getuID() {
+    public int getuID() {
         return uID;
     }
 
-    public void setuID(String uID) {
+    public void setuID(int uID) {
         this.uID = uID;
     }
 

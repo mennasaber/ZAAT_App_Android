@@ -6,8 +6,8 @@ public class User {
     private String uGender;
     private String uStatue;
     private Boolean uInChat;
-    String uID;
-
+    private int uID;
+private int cID;
     public User() {
     }
 
@@ -23,7 +23,7 @@ public class User {
         this.uGender = uGender;
     }
 
-    public void setuID(String uID) {
+    public void setuID(int uID) {
         this.uID = uID;
     }
 
@@ -35,7 +35,7 @@ public class User {
         this.uInChat = uInChat;
     }
 
-    public User(String uName, String uPassword, String uID, String uGender,String uStatue , Boolean uInChat) {
+    public User(String uName, String uPassword, int uID, String uGender,String uStatue , Boolean uInChat) {
         this.uName = uName;
         this.uPassword = uPassword;
         this.uGender = uGender;
@@ -72,7 +72,15 @@ public class User {
         return uGender;
     }
 
-    public String getuID() {
+    public int getuID() {
         return uID;
+    }
+
+    public int getcID() {
+        return cID;
+    }
+
+    public void setcID(int cID) {
+        this.cID = cID;
     }
 }

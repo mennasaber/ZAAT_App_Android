@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().setElevation(0);
 
-        getUserData();
-        getDataFromDatabase();
-        updateSharedPref();
+      //  getUserData();
+      //  getDataFromDatabase();
+       // updateSharedPref();
 
         String home = getResources().getString(R.string.home);
         String talk = getResources().getString(R.string.talk);
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabs = new String[]{home,talk,others};
 
-
+        myPrefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         ViewPageAdapter viewPageAdapter = new ViewPageAdapter(getSupportFragmentManager(), tabs);
         ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(viewPageAdapter);
@@ -52,34 +52,34 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getUserData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-        user = new User(sharedPreferences.getString("uname", null),
-                sharedPreferences.getString("upassword", null),
-                sharedPreferences.getString("uid", null),
-                sharedPreferences.getString("ugender", null),
-                sharedPreferences.getString("ustatue", null),
-                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
+//        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+//        user = new User(sharedPreferences.getString("uname", null),
+//                sharedPreferences.getString("upassword", null),
+//                sharedPreferences.getString("uid", null),
+//                sharedPreferences.getString("ugender", null),
+//                sharedPreferences.getString("ustatue", null),
+//                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
     }
 
     private void getDataFromDatabase() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-        databaseReference.addValueEventListener((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    User u = d.getValue(User.class);
-                    if (u.getuID().equals(user.getuID())) {
-                        user = u;
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        }));
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+//        databaseReference.addValueEventListener((new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                for (DataSnapshot d : dataSnapshot.getChildren()) {
+//                    User u = d.getValue(User.class);
+//                    if (u.getuID().equals(user.getuID())) {
+//                        user = u;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//            }
+//        }));
     }
 
     private void updateSharedPref() {
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = myPrefs.edit();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
         editor.putString("uinchat", String.valueOf(user.getuInChat()));

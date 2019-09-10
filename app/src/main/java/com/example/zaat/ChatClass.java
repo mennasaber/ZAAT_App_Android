@@ -3,47 +3,46 @@ package com.example.zaat;
 import java.util.ArrayList;
 
 public class ChatClass {
-
-    private String fID;
-    private String sId;
-    String mID;
+    private int ID;
+    private int fID;
+    private int sID;
 
 
     public ChatClass() {
     }
 
-    public ChatClass(String fID, String sId) {
+    public ChatClass(int fID, int sID) {
         this.fID = fID;
-        this.sId = sId;
+        this.sID = sID;
 
     }
 
-    public ChatClass(String fID, String sId, ArrayList<Message_chatting> messageList) {
+    public ChatClass(int fID, int sID, ArrayList<Message_chatting> messageList) {
         this.fID = fID;
-        this.sId = sId;
+        this.sID = sID;
     }
 
-    public String getfID() {
+    public int getfID() {
         return fID;
     }
 
-    public void setfID(String fID) {
+    public void setfID(int fID) {
         this.fID = fID;
     }
 
-    public String getsId() {
-        return sId;
+    public int getsID() {
+        return sID;
     }
 
-    public void setsId(String sId) {
-        this.sId = sId;
+    public void setsID(int sID) {
+        this.sID = sID;
     }
 
-    public String getmID() {
-        return mID;
+    public int getID() {
+        return ID;
     }
 
-    public void setmID(String mID) {
-        this.mID = mID;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 }

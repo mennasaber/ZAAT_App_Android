@@ -14,35 +14,49 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
     User user = null;
-    ArrayList<User> listUser = new ArrayList<>();
-    DatabaseReference databaseReference;
     TextView Username_text_view;
     TextView password_text_view;
     String uName;
     String uPassword;
     TextView CreateEmail_text_View;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        requestQueue = Volley.newRequestQueue(this);
+
 
         Username_text_view = findViewById(R.id.username_login);
         password_text_view = findViewById(R.id.password_login);
-
+        CreateEmail_text_View = findViewById(R.id.createEmail);
 
         Button loginButton = findViewById(R.id.login);
 
@@ -54,21 +68,13 @@ public class Login extends AppCompatActivity {
                     uName = Username_text_view.getText().toString();
                     uPassword = password_text_view.getText().toString();
 
-                    if (CheckValidUser(uName, uPassword)) {
-                        SaveData(user);
-                        Intent MainIntent = new Intent(Login.this, MainActivity.class);
-                        MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        MainIntent.putExtra("EXIT", true);
-                        startActivity(MainIntent);
-                    } else
-                        Toast.makeText(Login.this, getResources().getString(R.string.inValidLogin), Toast.LENGTH_SHORT).show();
+                    getUser();
                 } else
                     Toast.makeText(Login.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        CreateEmail_text_View = findViewById(R.id.createEmail);
 
         CreateEmail_text_View.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,31 +83,12 @@ public class Login extends AppCompatActivity {
                 startActivity(resIntent);
             }
         });
-
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        databaseReference.addValueEventListener((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                listUser.clear();
-
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    User u = d.getValue(User.class);
-                    listUser.add(u);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Login.this, "Error", Toast.LENGTH_SHORT).show();
-            }
-        }));
         SharedPreferences myPrefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         String username = myPrefs.getString("uname", null);
         if (username != null) {
@@ -112,29 +99,64 @@ public class Login extends AppCompatActivity {
         }
     }
 
+    private void getUser() {
+        String url = "http://192.168.1.7/zaat/public/api/user/getLoginUser?username=" + uName + "&password=" + uPassword;
 
-    private boolean CheckValidUser(String uName, String uPassword) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
-        for (User user : listUser) {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            if (jsonArray.length() > 0) {
+                                user = new User();
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                user.setuID(jsonObject.getInt("id"));
+                                user.setuName(jsonObject.getString("username"));
+                                user.setuPassword(jsonObject.getString("password"));
+                                user.setuGender(jsonObject.getString("gender"));
+                                switch (jsonObject.getInt("inChat")) {
+                                    case 0:
+                                        user.setuInChat(false);
+                                        break;
+                                    case 1:
+                                        user.setuInChat(true);
+                                        break;
+                                }
+                                user.setUstatue(jsonObject.getString("statue"));
+                                SaveData();
+                                Intent MainIntent = new Intent(Login.this, MainActivity.class);
+                                MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                MainIntent.putExtra("EXIT", true);
+                                startActivity(MainIntent);
+                            } else {
+                                Toast.makeText(Login.this, getResources().getString(R.string.inValidLogin), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                        }
 
-            if ((user.getuName()).equals(uName) && (user.getuPassword()).equals(uPassword)) {
-                this.user = user;
-                return true;
-            }
+                    }
+                }, new Response.ErrorListener() {
 
-        }
-        return false;
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Login.this, error.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
     }
 
-    private void SaveData(User user) {
+    private void SaveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
-        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.putBoolean("uinchat", user.getuInChat());
         editor.apply();
     }
 

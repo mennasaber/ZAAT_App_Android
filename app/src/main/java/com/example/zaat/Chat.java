@@ -19,29 +19,41 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Chat extends AppCompatActivity {
 
-    DatabaseReference databaseReference;
-    ChatClass chatting;
+    ChatClass chat;
     SharedPreferences sharedPreferences;
     static User user;
     ArrayList<Message_chatting> list_message;
     DatabaseReference mdaDatabaseReference;
     ListView list;
     ImageView image_send;
-    String chatID;
+
     ChatAdapter adapter;
     TextView text_message;
     Boolean inChatting;
     Boolean active;
+    private RequestQueue requestQueue;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,6 +77,7 @@ public class Chat extends AppCompatActivity {
                                     clearDataOfChat_Messages();
                                     updateSharedpref();
                                     updateUsersData();
+
                                     Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
                                     LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     LoginIntent.putExtra("EXIT", true);
@@ -82,21 +95,56 @@ public class Chat extends AppCompatActivity {
     }
 
     private void updateUsersData() {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
-        databaseRef.child(chatting.getfID()).child("uInChat").setValue(false);
-        databaseRef.child(chatting.getsId()).child("uInChat").setValue(false);
+        updateRequest(chat.getfID());
+        updateRequest(chat.getsID());
+    }
+
+    private void updateRequest(final int id) {
+        String url = "http://192.168.1.7/zaat/public/api/user/updateUser/" + id + "?inChat=0";
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(stringRequest);
     }
 
     private void clearDataOfChat() {
-        DatabaseReference d = FirebaseDatabase.getInstance().getReference()
-                .child("Chats").child(chatID);
-        d.removeValue();
+        String url = "http://192.168.1.7/zaat/public/api/chat/deleteChat/" + chat.getID();
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(stringRequest);
     }
 
     private void clearDataOfChat_Messages() {
-        DatabaseReference d = FirebaseDatabase.getInstance().getReference()
-                .child("Chat_Messages").child(chatting.getmID());
-        d.removeValue();
+        String url = "http://192.168.1.7/zaat/public/api/message/deleteMessages/" + chat.getID();
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(stringRequest);
     }
 
     @Override
@@ -111,37 +159,29 @@ public class Chat extends AppCompatActivity {
         list.setAdapter(adapter);
         image_send = findViewById(R.id.button_send);
         text_message = findViewById(R.id.chat_text);
-        chatting = new ChatClass();
 
-        sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-        user = new User(sharedPreferences.getString("uname", null),
-                sharedPreferences.getString("upassword", null),
-                sharedPreferences.getString("uid", null),
-                sharedPreferences.getString("ugender", null),
-                sharedPreferences.getString("ustatue", null),
-                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
-        databaseReference.addValueEventListener((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    chatting = d.getValue(ChatClass.class);
-                    if (chatting.getfID().equals(user.uID) || chatting.getsId().equals(user.uID)) {
-                        chatID = d.getKey();
-                        inChatting = true;
-                        break;
-                    } else
-                        inChatting = false;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-
-        }));
+//        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+//        databaseReference.addValueEventListener((new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                for (DataSnapshot d : dataSnapshot.getChildren()) {
+//                    chatting = d.getValue(ChatClass.class);
+//                    if (chatting.getfID().equals(user.uID) || chatting.getsId().equals(user.uID)) {
+//                        chatID = d.getKey();
+//                        inChatting = true;
+//                        break;
+//                    } else
+//                        inChatting = false;
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//            }
+//
+//        }));
 
         image_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,37 +189,73 @@ public class Chat extends AppCompatActivity {
                 if (isNetworkAvailable()) {
                     String m = String.valueOf(text_message.getText());
                     if (m.trim().length() != 0) {
-                        Message_chatting mess = new Message_chatting(user.uID, m);
+                        Message_chatting mess = new Message_chatting(user.getuID(), m);
                         list_message.add(mess);
                         text_message.setText("");
-                        updateChat();
+                        postRequest(mess);
+                        adapter.notifyDataSetChanged();
                     }
                 } else
                     Toast.makeText(Chat.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
-        databaseRef.addValueEventListener(new ValueEventListener() {
+//        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
+//        databaseRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for (DataSnapshot d : dataSnapshot.getChildren()) {
+//                    User u = d.getValue(User.class);
+//                    if (u.getuID().equals(user.getuID())) {
+//                        user = u;
+//                        break;
+//                    }
+//                }
+//                if (!user.getuInChat() && active) {
+//                    Toast.makeText(Chat.this, getResources().getString(R.string.endChat), Toast.LENGTH_SHORT).show();
+//                    closeActivity();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+    }
+
+    private void postRequest(final Message_chatting mess) {
+        String url = "http://192.168.1.7/zaat/public/api/message/postMessage";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    User u = d.getValue(User.class);
-                    if (u.getuID().equals(user.getuID())) {
-                        user = u;
-                        break;
-                    }
-                }
-                if (!user.getuInChat() && active) {
-                    Toast.makeText(Chat.this, getResources().getString(R.string.endChat), Toast.LENGTH_SHORT).show();
-                    closeActivity();
-                }
+            public void onResponse(String response) {
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("content", mess.getMessage());
+                    jsonObject.put("uID", user.getuID());
+                    jsonObject.put("cID", chat.getID());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return jsonObject.toString().getBytes();
             }
-        });
+        };
+        requestQueue.add(stringRequest);
     }
 
     private void closeActivity() {
@@ -200,37 +276,83 @@ public class Chat extends AppCompatActivity {
     }
 
     private void updateChat() {
-        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
-        mdaDatabaseReference.child(chatting.getmID()).setValue(list_message);
+//        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
+//        mdaDatabaseReference.child(chatting.getmID()).setValue(list_message);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         active = true;
-        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
-        mdaDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                list_message.clear();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    if (d.getKey().equals(chatting.getmID())) {
-                        for (DataSnapshot dchild : d.getChildren()) {
-                            Message_chatting m = dchild.getValue(Message_chatting.class);
-                            list_message.add(m);
+        requestQueue = Volley.newRequestQueue(this);
+        user = ChattingFragment.user;
+        getChat();
+        scrollListView();
+    }
+
+    private void getMessages() {
+
+        String url = "http://192.168.1.7/zaat/public/api/message/getMessages/" + chat.getID();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            list_message.clear();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Message_chatting message_chatting = new Message_chatting();
+                                message_chatting.setuID(jsonObject.getInt("uID"));
+                                message_chatting.setMessage(jsonObject.getString("content"));
+                                list_message.add(message_chatting);
+                            }
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
                         }
+
                     }
-                }
-                adapter.notifyDataSetChanged();
-                scrollListView();
-            }
+                }, new Response.ErrorListener() {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Chat.this, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
+    }
 
-            }
-        });
+    private void getChat() {
+        String url = "http://192.168.1.7/zaat/public/api/chat/getChat/" + user.getuID();
 
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            chat = new ChatClass();
+                            chat.setfID(jsonObject.getInt("fID"));
+                            chat.setsID(jsonObject.getInt("sID"));
+                            chat.setID(jsonObject.getInt("id"));
+                            getMessages();
+
+                        } catch (JSONException e) {
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
     }
 
     private void updateSharedpref() {
@@ -238,10 +360,10 @@ public class Chat extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
-        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.putBoolean("uinchat", user.getuInChat());
         editor.apply();
     }
 

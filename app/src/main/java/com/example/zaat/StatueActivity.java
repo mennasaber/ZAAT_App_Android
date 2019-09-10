@@ -14,34 +14,38 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StatueActivity extends AppCompatActivity {
     Button button;
-    SharedPreferences sharedPreferences;
-    User user;
+    User user = new User();
     Spinner spinner;
-    DatabaseReference databaseReference;
-
+    private RequestQueue requestQueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statue);
+
+        requestQueue = Volley.newRequestQueue(this);
+
         button = findViewById(R.id.updateButton);
         spinner = findViewById(R.id.spinner);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
 
-        sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-        user = new User(sharedPreferences.getString("uname", null),
-                sharedPreferences.getString("upassword", null),
-                sharedPreferences.getString("uid", null),
-                sharedPreferences.getString("ugender", null),
-                sharedPreferences.getString("ustatue", null),
-                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
+        user = ChattingFragment.user;
 
         spinner.setSelection(getIndex());
 
@@ -51,9 +55,8 @@ public class StatueActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
                     user.setUstatue(String.valueOf(spinner.getSelectedItemPosition()));
-                    sharedPreferences.edit().clear();
                     updateStatue();
-                    updateSharedpref();
+                    updateSharedPref();
                     Toast.makeText(StatueActivity.this, getResources().getString(R.string.updateStatue), Toast.LENGTH_SHORT).show();
                     Intent MainIntent = new Intent(StatueActivity.this, MainActivity.class);
                     MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -66,30 +69,40 @@ public class StatueActivity extends AppCompatActivity {
 
     }
 
-    private void updateSharedpref() {
+    private void updateSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
-        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.putBoolean("uinchat", user.getuInChat());
         editor.apply();
     }
 
     private void updateStatue() {
-        databaseReference.child(user.uID).addListenerForSingleValueEvent(new ValueEventListener() {
+        String url = "http://192.168.1.7/zaat/public/api/user/updateUser/"+user.getuID();
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.getRef().setValue(user);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onResponse(String response) {
 
             }
-        });
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("statue",user.getUstatue());
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
     }
 
     private int getIndex() {
@@ -99,19 +112,6 @@ public class StatueActivity extends AppCompatActivity {
             return 1;
         else
             return 2;
-    }
-
-    private String getstatue(int selectedItemPosition) {
-        switch (selectedItemPosition) {
-            case 0:
-                return "0";
-            case 1:
-                return "Talk";
-            case 2:
-                return "Listen";
-
-        }
-        return null;
     }
 
     private boolean isNetworkAvailable() {

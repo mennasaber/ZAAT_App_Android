@@ -39,7 +39,7 @@ public class ChatAdapter extends ArrayAdapter<Message_chatting> {
 
         ImageView image = listItemView.findViewById(R.id.image_chat);
 
-        if (currentMessage.getuID().equals(Chat.user.uID)) {
+        if (currentMessage.getuID()==Chat.user.getuID()) {
             LinearLayout layout = listItemView.findViewById(R.id.chatitem);
             RelativeLayout relative = listItemView.findViewById(R.id.relativeLayout_chat);
             relative.setBackgroundResource(R.drawable.rounded_chatitem2);

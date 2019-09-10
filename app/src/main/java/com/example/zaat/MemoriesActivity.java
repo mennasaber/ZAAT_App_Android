@@ -12,11 +12,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,79 +37,90 @@ import java.util.Locale;
 
 
 public class MemoriesActivity extends AppCompatActivity {
-    SharedPreferences sharedPreferences;
     User user;
     ArrayList<Message> listMessages;
     messageMemoriesAdapter messageAdapter;
     ListView list;
     String[] current_date;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memories);
+
+        requestQueue = Volley.newRequestQueue(this);
+
         if (!isNetworkAvailable()) {
-            TextView t = findViewById(R.id.no_connection_memories);
-            t.setVisibility(View.VISIBLE);
+           setConnectionText(1);
         }
         listMessages = new ArrayList<>();
+
         list = findViewById(R.id.list_memories);
+
         messageAdapter = new messageMemoriesAdapter(getApplicationContext(), 0, listMessages);
         list.setAdapter(messageAdapter);
+
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         current_date = df.format(c).split("-");
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
-        databaseReference.addValueEventListener((new ValueEventListener() {
+        user = ChattingFragment.user;
 
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                sharedPreferences = getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-                user = new User(sharedPreferences.getString("uname", null),
-                        sharedPreferences.getString("upassword", null),
-                        sharedPreferences.getString("uid", null),
-                        sharedPreferences.getString("ugender", null),
-                        sharedPreferences.getString("ustatue", null),
-                        Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
-                listMessages.clear();
+        getDiaries();
 
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
+    }
 
-                    Message m = d.getValue(Message.class);
-                    try {
-                        Date c;
-                        c = new SimpleDateFormat("dd-MMM-yyyy").parse(m.getmDate());
+    private void getDiaries() {
+        String url = "http://192.168.1.7/zaat/public/api/diary/getDiaries/" + user.getuID();
 
-                        String[] past_date = String.valueOf(c).split(" ");
-                        if (m.getuID().equals(user.uID)
-                                && current_date[0].equals(past_date[2])
-                                && current_date[1].equals(past_date[1])
-                                && !current_date[2].equals(past_date[5]))
-                            listMessages.add(m);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            listMessages.clear();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Message message = new Message(jsonObject.getInt("id"),
+                                        jsonObject.getString("content"),
+                                        jsonObject.getInt("uID"),
+                                        jsonObject.getString("date"));
+
+                                Date c;
+                                c = new SimpleDateFormat("dd-MMM-yyyy").parse(message.getmDate());
+
+                                String[] past_date = String.valueOf(c).split(" ");
+                                if (message.getuID() == user.getuID()
+                                        && current_date[0].equals(past_date[2])
+                                        && current_date[1].equals(past_date[1])
+                                        && !current_date[2].equals(past_date[5]))
+                                    listMessages.add(message);
+                            }
+                        } catch (JSONException e) {
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (listMessages.size() == 0 && isNetworkAvailable()) {
+                            setNoMemoriesText(1);
+                            setConnectionText(0);
+                        } else {
+                            setConnectionText(0);
+                            setNoMemoriesText(0);
+                        }
+                        messageAdapter.notifyDataSetChanged();
                     }
-                }
-                if (listMessages.size() == 0 && isNetworkAvailable()) {
-                    TextView t = findViewById(R.id.no_memories);
-                    t.setVisibility(View.VISIBLE);
-                } else {
-                    TextView t1 = findViewById(R.id.no_memories);
-                    t1.setVisibility(View.GONE);
-                    TextView t2 = findViewById(R.id.no_connection_memories);
-                    t2.setVisibility(View.GONE);
-                }
-                messageAdapter.notifyDataSetChanged();
-            }
+                }, new Response.ErrorListener() {
 
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }));
-
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
     }
 
     private boolean isNetworkAvailable() {
@@ -107,5 +128,29 @@ public class MemoriesActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void setConnectionText(int check) {
+        TextView t = findViewById(R.id.no_connection_memories);
+        switch (check) {
+            case 0:
+                t.setVisibility(View.GONE);
+                break;
+            case 1:
+                t.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    public void setNoMemoriesText(int check) {
+        TextView t = findViewById(R.id.no_memories);
+        switch (check) {
+            case 0:
+                t.setVisibility(View.GONE);
+                break;
+            case 1:
+                t.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 }

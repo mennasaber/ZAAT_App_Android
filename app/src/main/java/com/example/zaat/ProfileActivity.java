@@ -1,6 +1,5 @@
 package com.example.zaat;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -8,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
     User user;
-    SharedPreferences sharedPreferences;
     TextView username;
     TextView gender;
     TextView statue;

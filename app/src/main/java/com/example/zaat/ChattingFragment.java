@@ -15,48 +15,41 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class ChattingFragment extends Fragment {
     View view;
-    static User user;
+    static User user = new User();
     SharedPreferences sharedPreferences;
-    DatabaseReference databaseReference;
+    private RequestQueue requestQueue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chatting, container, false);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-        sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-        user = new User(sharedPreferences.getString("uname", null),
-                sharedPreferences.getString("upassword", null),
-                sharedPreferences.getString("uid", null),
-                sharedPreferences.getString("ugender", null),
-                sharedPreferences.getString("ustatue", null),
-                Boolean.valueOf(sharedPreferences.getString("uinchat", null)));
+        requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        databaseReference.addValueEventListener((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    User u = d.getValue(User.class);
-                    if (u.getuID().equals(user.getuID())) {
-                        user = u;
-                    }
-                }
-            }
+        // update data of user to sure he doesn't in chatting with another user
+        getDataSharedPref();
+        getData();
+        updateSharedPref();
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        }));
         if (isAdded()) {
             LinearLayout linearLayout_statue = view.findViewById(R.id.statue);
             linearLayout_statue.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +87,7 @@ public class ChattingFragment extends Fragment {
                             startActivity(startChatIntent);
                         } else {
                             user.setuInChat(true);
-                            updateSharedpref();
+                            // updateSharedpref();
                             Intent chatIntent = new Intent(getActivity().getApplicationContext(), Chat.class);
                             startActivity(chatIntent);
                         }
@@ -119,25 +112,72 @@ public class ChattingFragment extends Fragment {
         return view;
     }
 
-    private void updateSharedpref() {
+    private void getData() {
+        String url = "http://192.168.1.7/zaat/public/api/user/getUsers/" + user.getuID();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            user = new User();
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            user.setuID(jsonObject.getInt("id"));
+                            user.setuName(jsonObject.getString("username"));
+                            user.setuPassword(jsonObject.getString("password"));
+                            user.setuGender(jsonObject.getString("gender"));
+                            switch (jsonObject.getInt("inChat")) {
+                                case 0:
+                                    user.setuInChat(false);
+                                    break;
+                                case 1:
+                                    user.setuInChat(true);
+                                    break;
+                            }
+                            user.setUstatue(jsonObject.getString("statue"));
+
+
+                        } catch (JSONException e) {
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void updateSharedPref() {
         SharedPreferences sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
-        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.putBoolean("uinchat", user.getuInChat());
         editor.apply();
     }
 
-    private boolean isNetworkAvailable() {
+    private void getDataSharedPref() {
+        sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        user = new User(sharedPreferences.getString("uname", null),
+                sharedPreferences.getString("upassword", null),
+                sharedPreferences.getInt("uid", 0),
+                sharedPreferences.getString("ugender", null),
+                sharedPreferences.getString("ustatue", null),
+                sharedPreferences.getBoolean("uinchat", false));
+    }
 
+    private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-
-
     }
 }

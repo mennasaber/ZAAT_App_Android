@@ -15,17 +15,27 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class registration extends AppCompatActivity {
 
-    DatabaseReference databaseReference;
+
     User user = null;
     Button registrationButton;
     TextView username_textView;
@@ -34,7 +44,8 @@ public class registration extends AppCompatActivity {
     RadioButton radioButton_male;
     String username;
     String password;
-    ArrayList<User> listUser = new ArrayList<>();
+    private RequestQueue requestQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +57,7 @@ public class registration extends AppCompatActivity {
         radioButton_female = findViewById(R.id.female_radio_button);
         radioButton_male = findViewById(R.id.male_radio_button);
 
-
+        requestQueue = Volley.newRequestQueue(this);
         registrationButton = findViewById(R.id.signUp);
 
         registrationButton.setOnClickListener(new View.OnClickListener() {
@@ -56,23 +67,11 @@ public class registration extends AppCompatActivity {
                     username = username_textView.getText().toString();
                     password = password_textView.getText().toString();
 
-                    if (ValidationUser(username, password) && !userExist()) {
-
-                        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+                    if (ValidationUser(username, password)) {
                         user = new User(username.trim(), password, getGender(radioButton_female, radioButton_male), "0", false);
-                        user.setuID(databaseReference.push().getKey());
 
-                        databaseReference.child(user.uID).setValue(user);
+                        postRequest();
 
-                        SaveData(user);
-
-                        Intent MainIntent = new Intent(registration.this, MainActivity.class);
-                        MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        MainIntent.putExtra("EXIT", true);
-                        startActivity(MainIntent);
-
-                    } else if (userExist()) {
-                        Toast.makeText(registration.this, getResources().getString(R.string.userExist), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(registration.this, getResources().getString(R.string.inValidLogin), Toast.LENGTH_SHORT).show();
                     }
@@ -83,14 +82,48 @@ public class registration extends AppCompatActivity {
 
     }
 
-    private boolean userExist() {
-        for (int i = 0; i < listUser.size(); i++) {
-            if (listUser.get(i).getuName().equals(username.trim()))
-                return true;
-        }
-        return false;
-    }
+    private void postRequest() {
+        String url = "http://192.168.1.7/zaat/public/api/user/postUser";
 
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                SaveData(user);
+
+                Intent MainIntent = new Intent(registration.this, MainActivity.class);
+                MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                MainIntent.putExtra("EXIT", true);
+                startActivity(MainIntent);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(registration.this, getResources().getString(R.string.userExist), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("username", user.getuName());
+                    jsonObject.put("password", user.getuPassword());
+                    jsonObject.put("gender", user.getuGender());
+                    jsonObject.put("statue", user.getUstatue());
+                    jsonObject.put("inChat", user.getuInChat());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return jsonObject.toString().getBytes();
+            }
+        };
+        requestQueue.add(stringRequest);
+    }
 
     private String getGender(RadioButton radioButton_female, RadioButton radioButton_male) {
         if (radioButton_female.isChecked())
@@ -109,10 +142,10 @@ public class registration extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("uname", user.getuName());
         editor.putString("upassword", user.getuPassword());
-        editor.putString("uid", user.uID);
+        editor.putInt("uid", user.getuID());
         editor.putString("ugender", user.getuGender());
         editor.putString("ustatue", user.getUstatue());
-        editor.putString("uinchat", String.valueOf(user.getuInChat()));
+        editor.putBoolean("uinchat", user.getuInChat());
         editor.apply();
     }
 
@@ -126,22 +159,5 @@ public class registration extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addValueEventListener((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                listUser.clear();
-
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    User u = d.getValue(User.class);
-                    listUser.add(u);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        }));
     }
 }
