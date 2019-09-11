@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.classes;
 
 public class User {
     private String uName;
@@ -7,7 +7,7 @@ public class User {
     private String uStatue;
     private Boolean uInChat;
     private int uID;
-private int cID;
+
     public User() {
     }
 
@@ -27,7 +27,7 @@ private int cID;
         this.uID = uID;
     }
 
-    public User(String uName, String uPassword, String uGender,String uStatue , Boolean uInChat) {
+    public User(String uName, String uPassword, String uGender, String uStatue, Boolean uInChat) {
         this.uName = uName;
         this.uPassword = uPassword;
         this.uGender = uGender;
@@ -35,7 +35,7 @@ private int cID;
         this.uInChat = uInChat;
     }
 
-    public User(String uName, String uPassword, int uID, String uGender,String uStatue , Boolean uInChat) {
+    public User(String uName, String uPassword, int uID, String uGender, String uStatue, Boolean uInChat) {
         this.uName = uName;
         this.uPassword = uPassword;
         this.uGender = uGender;
@@ -76,11 +76,4 @@ private int cID;
         return uID;
     }
 
-    public int getcID() {
-        return cID;
-    }
-
-    public void setcID(int cID) {
-        this.cID = cID;
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -22,20 +21,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.JsonArray;
+import com.example.zaat.fragments.ChattingFragment;
+import com.example.zaat.R;
+import com.example.zaat.classes.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class StartchatActivity extends AppCompatActivity {
@@ -210,6 +204,7 @@ public class StartchatActivity extends AppCompatActivity {
         Intent main = new Intent(StartchatActivity.this, MainActivity.class);
         main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         main.putExtra("EXIT", true);
+        main.putExtra("frgToLoad", 2);
         startActivity(main);
     }
 

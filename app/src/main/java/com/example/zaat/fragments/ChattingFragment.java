@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -21,20 +20,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.zaat.R;
+import com.example.zaat.activities.Chat;
+import com.example.zaat.activities.MemoriesActivity;
+import com.example.zaat.activities.ProfileActivity;
+import com.example.zaat.activities.StartchatActivity;
+import com.example.zaat.activities.StatueActivity;
+import com.example.zaat.classes.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class ChattingFragment extends Fragment {
     View view;
-    static User user = new User();
+    public static User user = new User();
     SharedPreferences sharedPreferences;
     private RequestQueue requestQueue;
 
@@ -46,9 +46,6 @@ public class ChattingFragment extends Fragment {
 
 
         // update data of user to sure he doesn't in chatting with another user
-        getDataSharedPref();
-        getData();
-        updateSharedPref();
 
         if (isAdded()) {
             LinearLayout linearLayout_statue = view.findViewById(R.id.statue);
@@ -121,14 +118,13 @@ public class ChattingFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
                             user = new User();
-                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            user.setuID(jsonObject.getInt("id"));
-                            user.setuName(jsonObject.getString("username"));
-                            user.setuPassword(jsonObject.getString("password"));
-                            user.setuGender(jsonObject.getString("gender"));
-                            switch (jsonObject.getInt("inChat")) {
+                            user.setuID(response.getInt("id"));
+                            user.setuName(response.getString("username"));
+                            user.setuPassword(response.getString("password"));
+                            user.setuGender(response.getString("gender"));
+
+                            switch (response.getInt("inChat")) {
                                 case 0:
                                     user.setuInChat(false);
                                     break;
@@ -136,10 +132,11 @@ public class ChattingFragment extends Fragment {
                                     user.setuInChat(true);
                                     break;
                             }
-                            user.setUstatue(jsonObject.getString("statue"));
+                            user.setUstatue(response.getString("statue"));
 
 
                         } catch (JSONException e) {
+                            Toast.makeText(getActivity().getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -179,5 +176,15 @@ public class ChattingFragment extends Fragment {
                 = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if(isVisibleToUser&&isAdded()){
+            Toast.makeText(getContext().getApplicationContext(),"here",Toast.LENGTH_SHORT).show();
+            getDataSharedPref();
+            getData();
+            updateSharedPref();
+        }
     }
 }

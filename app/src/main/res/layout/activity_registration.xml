@@ -44,8 +44,8 @@
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
             android:layout_below="@id/password_registration"
-            android:layout_marginBottom="20dp"
             android:checkedButton="@id/male_radio_button"
             android:orientation="horizontal">
 
@@ -53,7 +53,6 @@
                 android:id="@+id/male_radio_button"
                 android:layout_width="146dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
                 android:text="@string/male"
                 android:textColor="@color/colorDarkRed" />
@@ -62,7 +61,6 @@
                 android:id="@+id/female_radio_button"
                 android:layout_width="146dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
                 android:buttonTint="@color/colorDarkRed"
                 android:text="@string/female"
                 android:textColor="@color/colorDarkRed" />
@@ -71,11 +69,10 @@
         <Button
             android:id="@+id/signUp"
             android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:layout_below="@id/radio_group"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:maxHeight="40dp"
+            android:maxHeight="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
             android:text="@string/signUp"

@@ -1,8 +1,7 @@
-package com.example.zaat;
+package com.example.zaat.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,8 +22,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.zaat.R;
+import com.example.zaat.classes.Message;
+import com.example.zaat.classes.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,13 +38,11 @@ public class TalkFragment extends Fragment {
     Message message;
     User user;
     EditText message_edit_view;
-    SharedPreferences sharedPreferences;
     private RequestQueue requestQueue;
 
     public TalkFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

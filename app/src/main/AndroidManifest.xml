@@ -8,16 +8,17 @@
         android:label="@string/app_name"
         android:noHistory="true"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MemoriesActivity"></activity>
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".StartchatActivity" />
-        <activity android:name=".StatueActivity" />
-        <activity android:name=".Chat" />
-        <activity android:name=".registration" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".Login">
+        <activity android:name=".activities.MemoriesActivity"></activity>
+        <activity android:name=".activities.ProfileActivity" />
+        <activity android:name=".activities.StartchatActivity" />
+        <activity android:name=".activities.StatueActivity" />
+        <activity android:name=".activities.Chat" />
+        <activity android:name=".activities.registration" />
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

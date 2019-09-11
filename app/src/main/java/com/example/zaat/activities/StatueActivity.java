@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,11 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.zaat.fragments.ChattingFragment;
+import com.example.zaat.R;
+import com.example.zaat.classes.User;
 
 import java.util.HashMap;
 import java.util.Map;

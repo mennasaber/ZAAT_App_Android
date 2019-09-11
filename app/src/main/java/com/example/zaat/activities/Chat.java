@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,11 +28,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.zaat.adapters.ChatAdapter;
+import com.example.zaat.classes.ChatClass;
+import com.example.zaat.fragments.ChattingFragment;
+import com.example.zaat.classes.Message_chatting;
+import com.example.zaat.R;
+import com.example.zaat.classes.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,18 +44,18 @@ import java.util.ArrayList;
 public class Chat extends AppCompatActivity {
 
     ChatClass chat;
-    SharedPreferences sharedPreferences;
-    static User user;
+    public static User user;
     ArrayList<Message_chatting> list_message;
-    DatabaseReference mdaDatabaseReference;
     ListView list;
     ImageView image_send;
-
+    private static int TIME_OUT = 6000;
     ChatAdapter adapter;
     TextView text_message;
     Boolean inChatting;
     Boolean active;
     private RequestQueue requestQueue;
+    Handler hand = new Handler();
+    Runnable runnable;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,17 +73,14 @@ public class Chat extends AppCompatActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (isNetworkAvailable()) {
-                                    user.setuInChat(false);
 
                                     clearDataOfChat();
                                     clearDataOfChat_Messages();
-                                    updateSharedpref();
+                                    user.setuInChat(false);
+                                    updateSharedPref();
                                     updateUsersData();
 
-                                    Intent LoginIntent = new Intent(Chat.this, MainActivity.class);
-                                    LoginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    LoginIntent.putExtra("EXIT", true);
-                                    startActivity(LoginIntent);
+
                                 } else
                                     Toast.makeText(Chat.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
                             }
@@ -136,7 +135,7 @@ public class Chat extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                list_message.clear();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -152,6 +151,7 @@ public class Chat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
         inChatting = false;
         list = findViewById(R.id.listView_chat);
         list_message = new ArrayList<>();
@@ -161,28 +161,6 @@ public class Chat extends AppCompatActivity {
         text_message = findViewById(R.id.chat_text);
 
 
-//        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
-//        databaseReference.addValueEventListener((new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                for (DataSnapshot d : dataSnapshot.getChildren()) {
-//                    chatting = d.getValue(ChatClass.class);
-//                    if (chatting.getfID().equals(user.uID) || chatting.getsId().equals(user.uID)) {
-//                        chatID = d.getKey();
-//                        inChatting = true;
-//                        break;
-//                    } else
-//                        inChatting = false;
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//            }
-//
-//        }));
-
         image_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,37 +168,54 @@ public class Chat extends AppCompatActivity {
                     String m = String.valueOf(text_message.getText());
                     if (m.trim().length() != 0) {
                         Message_chatting mess = new Message_chatting(user.getuID(), m);
+                        postRequest(mess);
                         list_message.add(mess);
                         text_message.setText("");
-                        postRequest(mess);
                         adapter.notifyDataSetChanged();
                     }
                 } else
                     Toast.makeText(Chat.this, getResources().getString(R.string.noConnection), Toast.LENGTH_SHORT).show();
             }
         });
-//        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users");
-//        databaseRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot d : dataSnapshot.getChildren()) {
-//                    User u = d.getValue(User.class);
-//                    if (u.getuID().equals(user.getuID())) {
-//                        user = u;
-//                        break;
-//                    }
-//                }
-//                if (!user.getuInChat() && active) {
-//                    Toast.makeText(Chat.this, getResources().getString(R.string.endChat), Toast.LENGTH_SHORT).show();
-//                    closeActivity();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+    }
+
+    private ArrayList<Message_chatting> getData() {
+        final ArrayList<Message_chatting> messages = new ArrayList<>();
+        String url = "http://192.168.1.7/zaat/public/api/message/getMessages/" + chat.getID();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Message_chatting message_chatting = new Message_chatting();
+                                message_chatting.setuID(jsonObject.getInt("uID"));
+                                message_chatting.setMessage(jsonObject.getString("content"));
+                                messages.add(message_chatting);
+                            }
+                            if (messages.size() > list_message.size()) {
+                                Toast.makeText(Chat.this, messages.size() + " " + list_message.size(), Toast.LENGTH_SHORT).show();
+                                list_message.clear();
+                                list_message.addAll(messages);
+                                adapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Chat.this, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
+        return messages;
     }
 
     private void postRequest(final Message_chatting mess) {
@@ -259,7 +254,7 @@ public class Chat extends AppCompatActivity {
     }
 
     private void closeActivity() {
-        updateChat();
+        Toast.makeText(Chat.this, getResources().getString(R.string.endChat), Toast.LENGTH_SHORT).show();
         Intent MainIntent = new Intent(Chat.this, MainActivity.class);
         MainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         MainIntent.putExtra("EXIT", true);
@@ -275,11 +270,6 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    private void updateChat() {
-//        mdaDatabaseReference = FirebaseDatabase.getInstance().getReference("Chat_Messages");
-//        mdaDatabaseReference.child(chatting.getmID()).setValue(list_message);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -288,6 +278,22 @@ public class Chat extends AppCompatActivity {
         user = ChattingFragment.user;
         getChat();
         scrollListView();
+        if (this.active) {
+            hand.postDelayed(runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (active) {
+                        getData();
+                        getDataOfUser();
+                        Toast.makeText(Chat.this, String.valueOf(user.getuInChat()), Toast.LENGTH_SHORT).show();
+                        if (!user.getuInChat()) {
+                            closeActivity();
+                        }
+                        hand.postDelayed(runnable, TIME_OUT);
+                    }
+                }
+            }, TIME_OUT);
+        }
     }
 
     private void getMessages() {
@@ -355,7 +361,7 @@ public class Chat extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void updateSharedpref() {
+    private void updateSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("uname", user.getuName());
@@ -372,6 +378,7 @@ public class Chat extends AppCompatActivity {
         Intent main = new Intent(Chat.this, MainActivity.class);
         main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         main.putExtra("EXIT", true);
+        main.putExtra("frgToLoad", 2);
         startActivity(main);
     }
 
@@ -387,4 +394,44 @@ public class Chat extends AppCompatActivity {
         super.onStop();
         active = false;
     }
+
+    private void getDataOfUser() {
+        String url = "http://192.168.1.7/zaat/public/api/user/getUsers/" + user.getuID();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            user = new User();
+                            user.setuID(response.getInt("id"));
+                            user.setuName(response.getString("username"));
+                            user.setuPassword(response.getString("password"));
+                            user.setuGender(response.getString("gender"));
+                            switch (response.getInt("inChat")) {
+                                case 0:
+                                    user.setuInChat(false);
+                                    break;
+                                case 1:
+                                    user.setuInChat(true);
+                                    break;
+                            }
+                            user.setUstatue(response.getString("statue"));
+
+
+                        } catch (JSONException e) {
+                            Toast.makeText(Chat.this, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        requestQueue.add(jsonObjectRequest);
+    }
+
 }

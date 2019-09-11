@@ -8,7 +8,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".Chat">
+    tools:context=".activities.Chat">
 
     <ListView
         android:id="@+id/listView_chat"

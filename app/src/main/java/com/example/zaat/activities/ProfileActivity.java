@@ -1,9 +1,12 @@
-package com.example.zaat;
+package com.example.zaat.activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.zaat.fragments.ChattingFragment;
+import com.example.zaat.R;
+import com.example.zaat.classes.User;
 
 public class ProfileActivity extends AppCompatActivity {
     User user;

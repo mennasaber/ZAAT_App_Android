@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.zaat.classes.Message_chatting;
+import com.example.zaat.R;
+import com.example.zaat.activities.Chat;
 
 import java.util.List;
 
@@ -39,7 +43,7 @@ public class ChatAdapter extends ArrayAdapter<Message_chatting> {
 
         ImageView image = listItemView.findViewById(R.id.image_chat);
 
-        if (currentMessage.getuID()==Chat.user.getuID()) {
+        if (currentMessage.getuID()== Chat.user.getuID()) {
             LinearLayout layout = listItemView.findViewById(R.id.chatitem);
             RelativeLayout relative = listItemView.findViewById(R.id.relativeLayout_chat);
             relative.setBackgroundResource(R.drawable.rounded_chatitem2);

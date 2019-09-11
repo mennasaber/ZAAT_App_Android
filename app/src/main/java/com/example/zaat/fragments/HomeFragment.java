@@ -1,9 +1,8 @@
-package com.example.zaat;
+package com.example.zaat.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,10 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,18 +24,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.JsonObject;
+import com.example.zaat.R;
+import com.example.zaat.adapters.MessageAdapter;
+import com.example.zaat.classes.Message;
+import com.example.zaat.classes.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class HomeFragment extends Fragment {
@@ -64,6 +59,8 @@ public class HomeFragment extends Fragment {
             if (!isNetworkAvailable()) {
                 setConnectionText(1);
                 setNoMemoriesText(0);
+                listMessages.clear();
+                messageAdapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity().getApplicationContext(), "dsd", Toast.LENGTH_SHORT).show();
                 getUserData();
@@ -143,6 +140,7 @@ public class HomeFragment extends Fragment {
                             } else if (jsonArray.length() > 0) {
                                 setNoMemoriesText(0);
                                 setConnectionText(0);
+                                Collections.reverse(listMessages);
                                 messageAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {

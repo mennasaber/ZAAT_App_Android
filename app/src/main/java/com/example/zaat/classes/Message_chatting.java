@@ -1,4 +1,4 @@
-package com.example.zaat;
+package com.example.zaat.classes;
 
 public class Message_chatting {
     private int uID;

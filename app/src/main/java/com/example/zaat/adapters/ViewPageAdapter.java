@@ -1,9 +1,13 @@
-package com.example.zaat;
+package com.example.zaat.adapters;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.example.zaat.fragments.ChattingFragment;
+import com.example.zaat.fragments.HomeFragment;
+import com.example.zaat.fragments.TalkFragment;
 
 public class ViewPageAdapter extends FragmentPagerAdapter {
 

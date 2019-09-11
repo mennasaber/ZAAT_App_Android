@@ -1,4 +1,6 @@
-package com.example.zaat;
+package com.example.zaat.classes;
+
+import com.example.zaat.classes.Message_chatting;
 
 import java.util.ArrayList;
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorLightRed"
     android:orientation="vertical"
-    tools:context=".StartchatActivity">
+    tools:context=".activities.StartchatActivity">
 
     <TextView
         android:layout_width="match_parent"

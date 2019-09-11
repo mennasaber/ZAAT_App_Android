@@ -45,7 +45,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/password_login"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_button"
             android:text="@string/login"
@@ -58,6 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
             android:text="@string/createAccount"
             android:textColor="@color/colorRed" />
